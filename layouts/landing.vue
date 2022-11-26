@@ -18,7 +18,7 @@
           <div class="flex lg:min-w-0 lg:flex-1" aria-label="Global">
             <a href="#" class="-m-1.5 p-1.5">
               <span class="sr-only">Walkie-Talkie</span>
-              <img class="h-4" src="logo%20teal.svg" alt="" />
+              <NuxtLink to="/"><img class="h-4" src="logo%20teal.svg" alt="" /></NuxtLink>
             </a>
           </div>
           <div class="flex lg:hidden">
