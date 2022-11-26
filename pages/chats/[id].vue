@@ -24,7 +24,7 @@
               </div>
 
               <div class="flex">
-                <img class="w-10 h-10 rounded-full inline mr-2" v-if="chat?.responser?.photoURL"
+                <img class="w-10 h-10 rounded-full inline mr-2" referrerpolicy="no-referrer" v-if="chat?.responser?.photoURL"
                      :src="chat?.responser?.photoURL"
                      :alt="chat?.responser?.name">
 

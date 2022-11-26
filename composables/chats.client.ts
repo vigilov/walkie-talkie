@@ -81,6 +81,7 @@ export const useOthersChats = async (uid?: string): Promise<Array<IChat>> => {
     const snap = await getDocs(query(
         collection(s, "chats"),
         where("responser.id", "==", uid),
+        where("status", "==", 'opened'),
         orderBy("createdAt", "desc"),
     ))
 
