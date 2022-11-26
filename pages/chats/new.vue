@@ -9,8 +9,7 @@
             <div class="md:col-span-1">
               <div class="px-4 md:px-0">
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Create new chat</h3>
-                <p class="mt-1 text-sm text-gray-600">asd asd asda
-                  da dasd asd masdmklasd asdf asdf asdf asdfa sd asfas fasdf asdf asd f af a sdf adfadsf a</p>
+                <p class="mt-1 text-sm text-gray-600">Describe what you are looking for so we can match you with an expert. Add a picture, if needed.</p>
               </div>
             </div>
             <div class="mt-5 md:col-span-2 md:mt-0">

@@ -9,7 +9,7 @@
             <div class="md:col-span-1">
               <div class="px-4 sm:px-0">
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Profile</h3>
-                <p class="mt-1 text-sm text-gray-600">Decide which communications you'd like to receive and how.</p>
+                <p class="mt-1 text-sm text-gray-600">If you want to get questions from users and are ready to answer them, mark yourself as an expert or business.</p>
               </div>
             </div>
             <div class="mt-5 md:col-span-2 md:mt-0">
@@ -27,7 +27,7 @@
                           </div>
                           <div class="ml-3 text-sm">
                             <label for="comments" class="font-medium text-gray-700">Expert</label>
-                            <p class="text-gray-500">Get notified when someones posts a comment on a posting.</p>
+                            <p class="text-gray-500">I am the user, who ready to answer the questions</p>
                           </div>
                         </div>
                         <div class="flex items-start">
@@ -37,7 +37,7 @@
                           </div>
                           <div class="ml-3 text-sm">
                             <label for="candidates" class="font-medium text-gray-700">Business</label>
-                            <p class="text-gray-500">Get notified when a candidate applies for a job.</p>
+                            <p class="text-gray-500">I am a company</p>
                           </div>
                         </div>
                       </div>
