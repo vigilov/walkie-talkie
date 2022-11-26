@@ -108,9 +108,9 @@
 
 <script setup lang="ts">
 import {useRoute} from "#imports";
-import {useAuthUser, useSignOut} from "~/composables/auth.cient";
+import {IAuthUser, useAuthUser, useSignOut} from "~/composables/auth.cient";
 
-const auth = await useAuthUser()
+const auth = <IAuthUser>await useAuthUser()
 
 function IsCurrentPage(page: string): boolean {
   return useRoute().name == page

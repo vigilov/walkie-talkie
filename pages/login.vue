@@ -78,17 +78,21 @@
 </template>
 
 <script setup>
+import {navigateTo, useRoute, useSignInWithGoogle, definePageMeta} from "#imports"
+
 definePageMeta({
   layout: "",
 })
 
-import {useSignInWithGoogle} from "~/composables/auth.cient"
-import {navigateTo} from "#imports"
-
 async function signInWithGoogle() {
   try {
-    await useSignInWithGoogle()
+    const id = await useSignInWithGoogle()
 
+    const route = useRoute()
+    if (route.query['role'] === 'business' && id) {
+      navigateTo(`/users/${id}`)
+      return
+    }
     navigateTo("/chats")
   } catch (e) {
     console.log("can't auth with google", e)
