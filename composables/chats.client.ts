@@ -68,7 +68,29 @@ export const useCreateChat = async (chat: IChat) => {
     await setDoc(doc(getFirestore(), "chats", chat.id), chat);
 }
 
-export const useChats = async (uid?: string): Promise<Array<IChat>> => {
+export const useOthersChats = async (uid?: string): Promise<Array<IChat>> => {
+    if (!uid) {
+        return Promise.resolve([])
+    }
+
+    const s = getFirestore()
+
+    const snap = await getDocs(query(
+        collection(s, "chats"),
+        where("responser.id", "==", uid),
+        orderBy("createdAt", "desc"),
+    ))
+
+    const chats: Array<IChat> = []
+
+    snap.forEach((doc) => {
+        chats.push(<IChat>doc.data())
+    })
+
+    return Promise.resolve(chats)
+}
+
+export const useMyChats = async (uid?: string): Promise<Array<IChat>> => {
     if (!uid) {
         return Promise.resolve([])
     }
