@@ -82,7 +82,7 @@ definePageMeta({
   layout: "",
 })
 
-import {useSignInWithGoogle} from "~/composables/useUser"
+import {useSignInWithGoogle} from "~/composables/auth.cient"
 import {navigateTo} from "#imports"
 
 async function signInWithGoogle() {

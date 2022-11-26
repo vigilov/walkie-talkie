@@ -60,11 +60,15 @@ export const useCreateChat = async (uid: string, chat: IChat) => {
 }
 
 export const useChats = async (uid?: string): Promise<Array<IChat>> => {
+    if (!uid) {
+        return Promise.resolve([])
+    }
+
     const s = getFirestore()
 
     const snap = await getDocs(query(
         collection(s, "chats"),
-        where("participants", "array-contains", uid),
+        where("createdBy", "==", uid),
         orderBy("timestamp", "desc"),
     ))
 
