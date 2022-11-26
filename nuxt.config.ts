@@ -13,5 +13,14 @@ export default defineNuxtConfig({
                 measurementId: process.env.FIREBASE_MEASUREMENT_ID
             }
         }
+    },
+    modules: [
+        '@nuxt/content',
+        '@nuxtjs/tailwindcss',
+        'nuxt-headlessui',
+        'nuxt-icon'
+    ],
+    headlessui: {
+        prefix: 'Headless'
     }
 })
