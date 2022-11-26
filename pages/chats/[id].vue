@@ -28,8 +28,9 @@
                      :src="chat?.responser?.photoURL"
                      :alt="chat?.responser?.name">
 
-                <ChatStatusPanel :id="chatID" class="mr-2"/>
-                <span class="block" v-if="chat?.status !== ChatStatus.Resolved">
+                <ChatStatusPanel :id="chatID" class="mr-2"
+                                 v-if="[ChatStatus.Resolved, ChatStatus.Closed].includes(chat?.status)"/>
+                <span class="block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat?.status)">
                   <button @click="newExpert"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -37,7 +38,7 @@
                   </button>
                 </span>
 
-                <span class="ml-3 block" v-if="chat?.status !== ChatStatus.Resolved">
+                <span class="ml-3 block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat?.status)">
                   <button @click="abortChat"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -66,11 +67,11 @@
                       {{ chatAuthorName(msg.author.name) }}
                     </template>
                     <template v-else>
-                      <Icon class="h-8 w-8 rounded-full min-w-min" name="noto-v1:wolf" />
+                      <Icon class="h-8 w-8 rounded-full min-w-min" name="noto-v1:wolf"/>
                     </template>
                   </div>
                   <div class="relative ml-3 text-sm  py-2 px-4 shadow w-fit w-full"
-                    :class="[msg.author ? 'bg-gray-100' : 'bg-teal-50']">
+                       :class="[msg.author ? 'bg-gray-100' : 'bg-teal-50']">
                     <div>{{ msg.text }}</div>
                     <div class="text-gray-400 text-xs">{{
                         new Date(msg.timestamp).toISOString().split('.')[0].split("T")[1]
@@ -159,7 +160,8 @@
 <script lang="ts" setup>
 import {IAuthUser} from "~/composables/auth.cient";
 import {
-  ChatStatus, navigateTo,
+  ChatStatus,
+  navigateTo,
   onUnmounted,
   onUpdated,
   ref,
@@ -297,8 +299,13 @@ onMounted(async () => {
     chat.value = <IChat>snapshot.data()
     summary.value = chat.value?.summary
 
+    if (chat.value?.createdBy != authUser.uid && chat.value?.status == ChatStatus.Pending) {
+      navigateTo("/chats")
+      return;
+    }
+
     if (lastStatus == ChatStatus.Pending && chat.value?.status == ChatStatus.Opened && chat.value.responser) {
-       useSendSystemMessage(chat.value.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
+      useSendSystemMessage(chat.value.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
     }
   })
 
