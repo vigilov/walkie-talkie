@@ -100,10 +100,10 @@ def on_snapshot(col_snapshot, changes, read_time):
         rated_users.sort(key=operator.itemgetter('rate'))
         # Set up the most relevant expert who has not yet tried to answer this question
         for user in rated_users:
-            print(user)
-            if responder := user["user"]["id"] in pending_chat.get("unMatchedParticipants"):
+            if user["user"]["id"] in pending_chat.get("unMatchedParticipants"):
                 continue
-
+            elif user["user"]["id"] == pending_chat.get("createdBy"):
+                continue
             batch.update(collection_chats.document(pending_chat.id), {'status': 'opened', 'responser': user["user"]})
             logging.info(f"pending chat {pending_chat.id}"
                          f" matched with user {user['user']['id']}, score == {user['rate']}")
