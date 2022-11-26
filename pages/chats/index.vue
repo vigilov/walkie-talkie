@@ -28,12 +28,12 @@
           <li class="mb-10 ml-4" v-for="chat in chats">
             <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white"></div>
             <time class="mb-1 text-sm font-normal leading-none text-gray-400">
-              {{ new Date(chat.timestamp).toISOString().split('.')[0].replace('T', ' ') }}
+              {{ chat.createdAt.split('.')[0].replace('T', ' ') }}
             </time>
             <p>
               <NuxtLink :to="`chats/${chat.id}`" class="text-lg font-semibold text-gray-900">{{ chat.topic }}</NuxtLink>
             </p>
-            <p class="mb-4 text-base font-normal text-gray-500">{{ chat.keywords[0] }}</p>
+            <p class="mb-4 text-base font-normal text-gray-500">{{ chat.firstMessage }}</p>
           </li>
         </ol>
       </div>

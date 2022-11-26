@@ -79,6 +79,8 @@
 </template>
 
 <script setup lang="ts">
+import {awaitExpression} from "@babel/types";
+
 definePageMeta({
   middleware: ['auth']
 })
@@ -93,7 +95,7 @@ import {
   useRuntimeConfig,
   useDeleteChat,
   useRoute,
-  navigateTo, useAuthUser
+  navigateTo, useAuthUser, useUpdateUser
 } from "#imports";
 import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
@@ -104,25 +106,35 @@ const message = ref<string>()
 const chatID = useState("chat_id", () => useRoute().params.id)
 const messages = useState<Array<IMessage>>('counter', () => [])
 const authUser = await useAuthUser()
-const user = ref()
+if (!authUser) {
+  await navigateTo("/login")
+}
+
+const user = await useUser(authUser.uid)
 const input = ref()
 
 let unsubscribe: Unsubscribe
 let userUnsubscribe: Unsubscribe
 
 Notification.requestPermission().then(async (perms: string) => {
-  if (!authUser) {
+  if (!user) {
     return
   }
   if (perms === 'granted') {
     const m = await getMessaging()
     const t = await getToken(m, {vapidKey: useRuntimeConfig().public.webPushKey});
 
-    const u = await useUser(authUser.uid)
-    if (!u.devices.includes(t)) {
-      u.devices.push(t)
+    if (!user.devices.includes(t)) {
+      user.devices.push(t)
     }
-    await useSetUser(authUser.uid, u)
+    try {
+      await useUpdateUser(user.id, {
+        devices: user.devices
+      })
+    } catch (e) {
+      console.log("can't update user", e)
+    }
+
   }
   console.log(perms)
 })
@@ -172,9 +184,6 @@ onMounted(async () => {
     if (!snap.exists()) {
       return
     }
-
-    const u = snap.data()
-    user.value = u
 
     const q = query(
         collection(getFirestore(), "messages"),

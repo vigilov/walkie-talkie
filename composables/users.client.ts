@@ -1,12 +1,12 @@
 import {getFirestore, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 
 interface IUser {
-    id?: string
+    id: string
     devices: Array<string>
     activeChat?: string
 }
 
-export const useUser = async (uid: string): Promise<IUser> => {
+export const useUser = async (uid: string): Promise<IUser | undefined> => {
     const docRef = doc(getFirestore(), "users", uid);
     const docSnap = await getDoc(docRef);
 
@@ -16,11 +16,11 @@ export const useUser = async (uid: string): Promise<IUser> => {
         console.log("user no exists");
     }
 
-    return Promise.resolve({devices: []});
+    return Promise.resolve(undefined);
 }
 
-export const useSetUser = async (uid: string, user: IUser) => {
-    await setDoc(doc(getFirestore(), "users", uid), user);
+export const useSetUser = async (user: IUser) => {
+    await setDoc(doc(getFirestore(), "users", user.id), user);
 }
 
 export const useUpdateUser = async (uid: string, update: any) => {

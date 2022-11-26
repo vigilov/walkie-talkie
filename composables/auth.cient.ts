@@ -1,5 +1,6 @@
 import {getAuth, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
 import {navigateTo} from "#app";
+import {useSetUser, useUser} from "~/composables/users.client";
 
 interface IAuthUser {
     uid: string
@@ -8,7 +9,11 @@ interface IAuthUser {
 }
 
 export const useSignInWithGoogle = async () => {
-    await signInWithPopup(getAuth(), new GoogleAuthProvider())
+    const auth = await signInWithPopup(getAuth(), new GoogleAuthProvider())
+    const user = await useUser(auth.user.uid)
+    if (!user) {
+        await useSetUser({id: auth.user.uid, devices: []})
+    }
 }
 
 export const useSignOut = async () => {

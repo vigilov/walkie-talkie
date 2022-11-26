@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-gray-100 flex-1 flex flex-col">
+  <div class="bg-gray-50 flex-1 flex flex-col">
     <div class="flex flex-col h-fit p-6 flex-1 max-md:p-0 border-gray-700 mx-auto max-w-7xl overflow-x-hidden w-full">
       <div
-          class="flex flex-col items-stretch flex-shrink-0 rounded-md bg-white p-4 max-md:rounded-none max-md:p-0 bg-gray-200">
+          class="flex flex-col items-stretch flex-shrink-0 rounded-md bg-white p-4 max-md:rounded-none max-md:p-0 bg-gray-100">
 
         <div class="mt-10 md:mt-0">
           <div class="md:grid md:grid-cols-3 md:gap-6">
@@ -35,16 +35,6 @@
                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"/>
                       </div>
                       <p class="mt-2 text-sm text-gray-500">What are you looking for?</p>
-                    </div>
-
-                    <div>
-                      <label for="keyword" class="block text-sm font-medium text-gray-700">Keyword</label>
-                      <div class="mt-1">
-                        <input id="about" type="text" name="keyword" v-model="keyword"
-                               placeholder="console -> playstation5 -> buy"
-                               class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"/>
-                      </div>
-                      <p class="mt-2 text-sm text-gray-500">Path tou your goal</p>
                     </div>
 
                     <div>
@@ -89,37 +79,34 @@
 </template>
 
 <script setup lang="ts">
-import {getAuth} from "firebase/auth";
-
 definePageMeta({
   middleware: ['auth']
 })
 
-import {navigateTo, ref, useUpdateUser, useCreateChat} from "#imports";
-import {useSendMessage} from "~/composables/chats.client";
+import {navigateTo, ref, useUpdateUser, useCreateChat, useAuthUser, useSendMessage} from "#imports";
 
 const topic = ref<string>()
-const keyword = ref<string>()
 const message = ref<string>()
 
 async function create() {
-  const auth = await getAuth();
-  const authUser = ref(auth.currentUser)
-  if (!authUser.value || !topic.value || !keyword.value) {
+  const authUser = await useAuthUser()
+  if (!authUser || !topic.value) {
     return
   }
 
   const chatID = useCreateUUID()
 
-  await useCreateChat(authUser.value.uid, {
+  await useCreateChat({
     id: chatID,
-    participants: [authUser.value.uid],
-    timestamp: Date.now(),
+    firstMessage: <string>message.value,
+    createdAt: new Date().toISOString(),
+    unMatchedParticipants: [],
+    createdBy: authUser.uid,
+    status: "pending",
     topic: topic.value,
-    keywords: [keyword.value]
   })
   await useSendMessage(<string>message.value, chatID)
-  await useUpdateUser(authUser.value.uid, {activeChat: chatID})
+  await useUpdateUser(authUser.uid, {activeChat: chatID})
   await navigateTo(`/chats/${chatID}`)
 }
 </script>

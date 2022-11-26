@@ -10,15 +10,16 @@ import {
     where,
     orderBy, getFirestore
 } from "firebase/firestore";
-import {useUpdateUser} from "~/composables/users.client";
 import {useAuthUser} from "~/composables/auth.cient";
 
 interface IChat {
-    id: string;
-    topic: string;
-    keywords: Array<string>
-    participants: Array<string>
-    timestamp: number
+    id: string
+    topic: string
+    unMatchedParticipants: Array<string>
+    firstMessage: string
+    createdBy: string
+    createdAt: string
+    status: string
 }
 
 interface IAuthor {
@@ -50,13 +51,8 @@ export const useDeleteChat = async (uid: string, chatID: string) => {
     }
 }
 
-export const useCreateChat = async (uid: string, chat: IChat) => {
-    const s = getFirestore()
-    await setDoc(doc(s, "chats", chat.id), chat);
-
-    await useUpdateUser(uid, {
-        activeChat: chat.id,
-    })
+export const useCreateChat = async (chat: IChat) => {
+    await setDoc(doc(getFirestore(), "chats", chat.id), chat);
 }
 
 export const useChats = async (uid?: string): Promise<Array<IChat>> => {
@@ -69,7 +65,7 @@ export const useChats = async (uid?: string): Promise<Array<IChat>> => {
     const snap = await getDocs(query(
         collection(s, "chats"),
         where("createdBy", "==", uid),
-        orderBy("timestamp", "desc"),
+        orderBy("createdAt", "desc"),
     ))
 
     const chats: Array<IChat> = []
@@ -82,7 +78,6 @@ export const useChats = async (uid?: string): Promise<Array<IChat>> => {
 }
 
 export const useSendMessage = async (text: string, chatID: string) => {
-    const store = getFirestore()
     const authUser = await useAuthUser()
     if (!authUser) {
         return
@@ -96,7 +91,7 @@ export const useSendMessage = async (text: string, chatID: string) => {
     };
 
     try {
-        const docRef = await addDoc(collection(store, "messages"), newMessage);
+        const docRef = await addDoc(collection(getFirestore(), "messages"), newMessage);
         console.log("Document written with ID: ", docRef.id);
     } catch (e) {
         console.error("Error adding document: ", e);
