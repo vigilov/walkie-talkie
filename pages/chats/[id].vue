@@ -296,7 +296,7 @@ onMounted(async () => {
         return
       }
       const m = <IMessage>change.doc.data()
-      if (!m.author) {
+      if (!m.author && chat.createdBy != authUser.uid) {
         return
       }
       messages.value.push(m);
