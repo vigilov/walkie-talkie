@@ -24,13 +24,15 @@
               </div>
 
               <div class="flex">
-                <img class="w-10 h-10 rounded-full inline mr-2" v-if="chat.responser?.photoURL"
+                <img class="w-10 h-10 rounded-full inline mr-2" referrerpolicy="no-referrer"
+                     v-if="chat.responser?.photoURL"
                      :src="chat.responser?.photoURL"
                      :alt="chat.responser?.name">
 
                 <ChatStatusPanel :id="chatID" class="mr-2"
                                  v-if="[ChatStatus.Resolved, ChatStatus.Closed].includes(chat.status)"/>
-                <span class="block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat.status)">
+
+                <span class="block" v-if="IsPanelEnabled()">
                   <button @click="newExpert"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -38,7 +40,7 @@
                   </button>
                 </span>
 
-                <span class="ml-3 block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat.status)">
+                <span class="ml-3 block" v-if="IsPanelEnabled()">
                   <button @click="abortChat"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -258,6 +260,16 @@ function chatAuthorName(name: string): string {
 
 function abortChat() {
   useAbortChat(<string>chatID.value)
+}
+
+function IsPanelEnabled(): boolean {
+  const c = chat.value
+
+  if (!c) {
+    return false
+  }
+
+  return ![ChatStatus.Closed, ChatStatus.Resolved].includes(c.status) && c.createdBy === authUser.uid
 }
 
 onUpdated(() => {
