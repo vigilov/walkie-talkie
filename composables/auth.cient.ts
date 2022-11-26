@@ -8,12 +8,15 @@ export interface IAuthUser {
     photoURL: string
 }
 
-export const useSignInWithGoogle = async () => {
+export const useSignInWithGoogle = async (): Promise<string | undefined> => {
     const auth = await signInWithPopup(getAuth(), new GoogleAuthProvider())
     const user = await useUser(auth.user.uid)
     if (!user) {
-        await useSetUser({id: auth.user.uid, devices: []})
+        await useSetUser({id: auth.user.uid, devices: [], roles: []})
+
+        return Promise.resolve(auth.user.uid)
     }
+    return Promise.resolve(undefined)
 }
 
 export const useSignOut = async () => {

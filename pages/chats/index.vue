@@ -22,7 +22,7 @@
           </NuxtLink>
         </div>
 
-        <h3 class="mb-4 text-base font-normal text-gray-500 text-xl">Chats chronology</h3>
+        <h3 class="mb-4 text-base font-normal text-gray-500 text-xl" v-if="chats.length > 0">Chats chronology</h3>
 
         <ol class="relative border-l border-gray-200 dark:border-gray-300">
           <li class="mb-10 ml-4" v-for="chat in chats">

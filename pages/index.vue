@@ -14,12 +14,12 @@
             <ContentDoc class="prose px-auto mx-auto" />
           </p>
           <div class="mt-8 flex gap-x-4 sm:justify-center">
-            <a href="#" class="inline-block rounded-lg bg-teal-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-teal-600 hover:bg-teal-700 hover:ring-teal-700">
+            <NuxtLink to="/chats" class="inline-block rounded-lg bg-teal-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-teal-600 hover:bg-teal-700 hover:ring-teal-700">
               Ask a question
-            </a>
-            <a href="#" class="inline-block rounded-lg px-4 py-1.5 text-base font-semibold leading-7 text-gray-900 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+            </NuxtLink>
+            <NuxtLink to="/chats?role=business" class="inline-block rounded-lg px-4 py-1.5 text-base font-semibold leading-7 text-gray-900 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
               Become an expert
-            </a>
+            </NuxtLink>
           </div>
         </div>
       </div>

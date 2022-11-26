@@ -1,8 +1,10 @@
 import {getFirestore, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 
-interface IUser {
+export interface IUser {
     id: string
     devices: Array<string>
+    bio?: string
+    roles: Array<string>
 }
 
 export const useUser = async (uid: string): Promise<IUser | undefined> => {
@@ -10,7 +12,11 @@ export const useUser = async (uid: string): Promise<IUser | undefined> => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        return Promise.resolve(<IUser>docSnap.data());
+        const user = <IUser>docSnap.data()
+        if (!user.roles) {
+            user.roles = <Array<string>>[]
+        }
+        return Promise.resolve(user);
     } else {
         console.log("user no exists");
     }

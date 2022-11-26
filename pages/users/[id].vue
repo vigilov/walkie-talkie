@@ -13,7 +13,7 @@
               </div>
             </div>
             <div class="mt-5 md:col-span-2 md:mt-0">
-              <form action="#" method="POST">
+              <form method="POST" @submit.prevent="save">
                 <div class="overflow-hidden shadow sm:rounded-md">
                   <div class="space-y-6 bg-white px-4 py-5 sm:p-6">
                     <fieldset>
@@ -22,7 +22,7 @@
                       <div class="mt-4 space-y-4">
                         <div class="flex items-start">
                           <div class="flex h-5 items-center">
-                            <input id="comments" name="comments" type="checkbox"
+                            <input id="comments" name="comments" type="checkbox" v-model="isExpert"
                                    class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"/>
                           </div>
                           <div class="ml-3 text-sm">
@@ -32,7 +32,7 @@
                         </div>
                         <div class="flex items-start">
                           <div class="flex h-5 items-center">
-                            <input id="candidates" name="candidates" type="checkbox"
+                            <input id="candidates" name="candidates" type="checkbox" v-model="isBusiness"
                                    class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"/>
                           </div>
                           <div class="ml-3 text-sm">
@@ -42,12 +42,12 @@
                         </div>
                       </div>
                     </fieldset>
-                    <TagsInput @newTag="newTag">
 
-                    </TagsInput>
-
-                    <div class="flex flex-wrap">
-                      <div class="m-2 px-2 bg-teal-800 rounded text-white" v-for="tag in tags">{{tag}}</div>
+                    <div>
+                      <label for="bio" class="block mb-2 text-sm font-medium text-gray-900">Bio</label>
+                      <textarea id="bio" v-model="bio" rows="4"
+                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500"
+                                placeholder="Write your thoughts here..."></textarea>
                     </div>
                   </div>
 
@@ -74,16 +74,39 @@
 </template>
 
 <script setup lang="ts">
+import {definePageMeta, navigateTo, useAuthUser, useUpdateUser, useUser} from "#imports";
 import WordCloud from "~/components/tagcloud.client";
-import TagsInput from "~/components/tagsinput.client"
+import {IAuthUser} from "~/composables/auth.cient";
+import {IUser} from "~/composables/users.client";
 
-const tags = ref<Array<string>>([])
+definePageMeta({
+  middleware: ['auth']
+})
 
-function newTag(newTag: string) {
-  if (!tags.value || tags.value.includes(newTag)) {
-    return
+const auth = <IAuthUser>await useAuthUser()
+const user = <IUser>await useUser(auth.uid)
+
+console.log(user.roles)
+
+const isExpert = ref<boolean>(user.roles.includes("expert"))
+const isBusiness = ref<boolean>(user.roles.includes("business"))
+const bio = ref<string>(<string>user.bio)
+
+async function save() {
+  const roles = []
+  if (isExpert.value) {
+    roles.push("expert")
   }
-  tags.value.push(newTag)
+  if (isBusiness.value) {
+    roles.push("business")
+  }
+
+  await useUpdateUser(user.id, {
+    roles: roles,
+    bio: bio.value
+  })
+
+  await navigateTo("/chats")
 }
 
 </script>
