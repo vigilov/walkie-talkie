@@ -4,7 +4,7 @@
       <div>
         <div>
           <h1 class="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl">Walkie-Talkie</h1>
-          <p class="mt-6 text-lg leading-8 text-gray-600 sm:text-center"><ContentDoc/></p>
+          <p class="mt-6 text-lg leading-8 text-gray-600 sm:text-center"><ContentDoc class="prose"/></p>
         </div>
       </div>
     </div>
