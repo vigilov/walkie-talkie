@@ -9,12 +9,10 @@ import {
     getDocs,
     query,
     where,
-    increment,
     orderBy, getFirestore,
 } from "firebase/firestore";
 import {useAuthUser} from "~/composables/auth.cient";
 import {useShowModal} from "~/composables/modal-window.client";
-import {useUpdateUser} from "~/composables/users.client";
 
 export enum ChatStatus {
     Off = "off",
@@ -125,7 +123,6 @@ export const useNewExpert = async (chatID: string) => {
         return
     }
 
-    const s = getFirestore()
 
     const chat = await useChat(chatID)
     // chat.unMatchedParticipants.push(chat.responser)
@@ -143,14 +140,14 @@ export const useAbortChat = async(chatID: string) => {
         return
     }
 
-    const s = getFirestore()
-    const chat = await useChat(chatID)
+    // const s = getFirestore()
+    // const chat = await useChat(chatID)
 
     let ok = await useShowModal("Abort chat", "Has your question been resolved?", "uil:comment-alt-question")
     if (ok) {
         ok = await useShowModal("Rate the Expert", "Thank the Expert?", "ps:tacos")
         if (ok) {
-            await useUpdateUser(chat.responser, {tacos: increment(1)})
+            // await useUpdateUser(chat.responser, {tacos: increment(1)})
         }
 
         await useUpdateChat(chatID, {

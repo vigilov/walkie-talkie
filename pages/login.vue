@@ -86,9 +86,8 @@ definePageMeta({
 
 async function signInWithGoogle() {
   try {
-    const id = await useSignInWithGoogle()
-
     const route = useRoute()
+    const id = await useSignInWithGoogle(route.query['role'])
     if (route.query['role'] === 'business' && id) {
       navigateTo(`/users/${id}`)
       return
