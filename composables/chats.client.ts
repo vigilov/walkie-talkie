@@ -4,6 +4,7 @@ import {
     addDoc,
     collection,
     deleteDoc,
+    getDoc,
     getDocs,
     query,
     where,
@@ -91,3 +92,12 @@ export const useSendMessage = async (text: string, chatID: string) => {
         console.error("Error adding document: ", e);
     }
 }
+
+export const useChat = async (id: string): Promise<IChat> => {
+    const s = getFirestore()
+
+    const snap = await getDoc(doc(s, 'chats', id))
+
+    return Promise.resolve(<IChat>await snap.data())
+}
+

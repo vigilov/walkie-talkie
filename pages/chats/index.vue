@@ -25,15 +25,18 @@
         <h3 class="mb-4 text-base font-normal text-gray-500 text-xl">Chats chronology</h3>
 
         <ol class="relative border-l border-gray-200 dark:border-gray-300">
-          <li class="mb-10 ml-4" v-for="chat in chats">
+          <li class="mb-10 ml-4 w-full" v-for="chat in chats">
+
             <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white"></div>
             <time class="mb-1 text-sm font-normal leading-none text-gray-400">
-              {{ chat.createdAt.split('.')[0].replace('T', ' ') }}
+              {{ typeof(chat.createdAt) === "string" ? chat.createdAt.split('.')[0].replace('T', ' ') : '' }}
             </time>
-            <p>
-              <NuxtLink :to="`chats/${chat.id}`" class="text-lg font-semibold text-gray-900">{{ chat.topic }}</NuxtLink>
-            </p>
-            <p class="mb-4 text-base font-normal text-gray-500">{{ chat.firstMessage }}</p>
+
+            <NuxtLink :to="`/chats/${chat.id}`"
+                      class="block w-full max-w-xl p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{{ chat.topic }}</h5>
+              <p class="font-normal text-gray-700 ">{{ chat.firstMessage }}</p>
+            </NuxtLink>
           </li>
         </ol>
       </div>

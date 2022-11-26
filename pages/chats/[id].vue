@@ -98,7 +98,7 @@ import {
 } from "#imports";
 import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
-import {useSendMessage, IMessage} from "~/composables/chats.client";
+import {useSendMessage, IMessage, useChat} from "~/composables/chats.client";
 
 const container = ref()
 const message = ref<string>()
@@ -134,6 +134,8 @@ Notification.requestPermission().then(async (perms: string) => {
   }
   console.log(perms)
 })
+
+const chat = await useChat(<string>chatID.value)
 
 async function deleteChat() {
   if (!authUser) {
