@@ -120,6 +120,12 @@ export const useUpdateChat = async (uid: string, update: any) => {
     await updateDoc(ref, update);
 }
 
+export const useGetChat = async (uid: string) : Promise<IChat> => {
+    const snap = await getDoc(doc(getFirestore(), "chats", uid));
+    const chat = <IChat>snap.data()
+    return Promise.resolve(chat);
+}
+
 export const useSendMessage = async (text: string, chatID: string) => {
     const authUser = await useAuthUser()
     if (!authUser) {

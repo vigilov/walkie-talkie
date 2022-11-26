@@ -19,18 +19,18 @@
 
               <div class="min-w-0 flex-1">
                 <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                  {{ chat?.topic }}
+                  {{ chat.topic }}
                 </span>
               </div>
 
               <div class="flex">
-                <img class="w-10 h-10 rounded-full inline mr-2" v-if="chat?.responser?.photoURL"
-                     :src="chat?.responser?.photoURL"
-                     :alt="chat?.responser?.name">
+                <img class="w-10 h-10 rounded-full inline mr-2" v-if="chat.responser?.photoURL"
+                     :src="chat.responser?.photoURL"
+                     :alt="chat.responser?.name">
 
                 <ChatStatusPanel :id="chatID" class="mr-2"
-                                 v-if="[ChatStatus.Resolved, ChatStatus.Closed].includes(chat?.status)"/>
-                <span class="block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat?.status)">
+                                 v-if="[ChatStatus.Resolved, ChatStatus.Closed].includes(chat.status)"/>
+                <span class="block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat.status)">
                   <button @click="newExpert"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -38,7 +38,7 @@
                   </button>
                 </span>
 
-                <span class="ml-3 block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat?.status)">
+                <span class="ml-3 block" v-if="![ChatStatus.Closed, ChatStatus.Resolved].includes(chat.status)">
                   <button @click="abortChat"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -54,7 +54,7 @@
               <div v-for="msg in messages"
                    :class="[!msg.author || msg.author.id !== authUser?.uid ? 'col-start-6 col-end-13 max-sm:col-start-2' : 'col-start-1 col-end-8 max-sm:col-end-12']"
                    class="p-3 rounded-md">
-                <div class="flex flex-row items-center">
+                <div class="flex flex-row items-center" v-if="msg.author || (!msg.author && authUser.uid === chat.createdBy) ">
                   <div v-if="msg.author && msg.author.avatarURL"
                        class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <img :src="msg.author.avatarURL" alt=""
@@ -81,7 +81,7 @@
                 </div>
               </div>
 
-              <div v-if="chat?.status === 'pending'" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
+              <div v-if="chat.status === 'pending'" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
                 <div class="flex flex-row items-center">
                   <div class="spinner">
                     <div class="double-bounce1"></div>
@@ -101,7 +101,7 @@
           </div>
         </div>
 
-        <div class="flex" v-if="chat?.status !== ChatStatus.Resolved">
+        <div class="flex" v-if="chat.status !== ChatStatus.Resolved">
           <form
               action="#"
               class="flex flex-row self-end items-center h-16 rounded-md bg-teal-800 w-full px-4 max-md:rounded-none"
@@ -138,7 +138,7 @@
             </div>
           </form>
         </div>
-        <div v-else-if="chat?.status === ChatStatus.Resolved" class="w-full p-4">
+        <div v-else-if="chat.status === ChatStatus.Resolved" class="w-full p-4">
           <h4 class="text-gray-500">
             Summary:
           </h4>
@@ -177,7 +177,7 @@ import {
 } from "#imports";
 import {collection, doc, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
-import {IChat, IMessage, useSendMessage, useSendSystemMessage} from "~/composables/chats.client";
+import {IChat, IMessage, useGetChat, useSendMessage, useSendSystemMessage} from "~/composables/chats.client";
 
 definePageMeta({
   middleware: ['auth', 'chat']
@@ -189,9 +189,10 @@ const chatID = useState("chat_id", () => useRoute().params.id)
 const messages = useState<Array<IMessage>>('counter', () => [])
 const authUser = <IAuthUser>await useAuthUser()
 const user = await useUser(authUser.uid)
-const chat = ref<IChat>()
 const summary = ref<string>()
 const input = ref()
+
+let chat = await useGetChat(<string>chatID.value)
 
 let unsubscribe: Unsubscribe
 let chatUnsubscribe: Unsubscribe
@@ -223,11 +224,11 @@ async function newExpert() {
 }
 
 async function updateSummary() {
-  if (!chat.value) {
+  if (!chat) {
     return
   }
 
-  await useUpdateChat(chat.value.id, {
+  await useUpdateChat(chat.id, {
     summary: summary.value
   })
 
@@ -294,18 +295,18 @@ onMounted(async () => {
       return
     }
 
-    const lastStatus = chat.value?.status
+    const lastStatus = chat.status
 
-    chat.value = <IChat>snapshot.data()
-    summary.value = chat.value?.summary
+    chat = <IChat>snapshot.data()
+    summary.value = chat.summary
 
-    if (chat.value?.createdBy != authUser.uid && chat.value?.status == ChatStatus.Pending) {
+    if (chat.createdBy != authUser.uid && chat.status == ChatStatus.Pending) {
       navigateTo("/chats")
       return;
     }
 
-    if (lastStatus == ChatStatus.Pending && chat.value?.status == ChatStatus.Opened && chat.value.responser) {
-      useSendSystemMessage(chat.value.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
+    if (lastStatus == ChatStatus.Pending && chat.status == ChatStatus.Opened && chat.responser) {
+      useSendSystemMessage(chat.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
     }
   })
 
