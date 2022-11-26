@@ -37,7 +37,7 @@
               </span>
 
                 <span class="ml-3 block">
-                <button
+                <button @click="abortChat"
                     class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     type="button">
                   <Icon class="text-xl" name="material-symbols:delete-forever-outline"/>
@@ -150,7 +150,7 @@ import {
   useUser,
   useRuntimeConfig,
   useRoute,
-  useAuthUser, useUpdateUser, useNewExpert
+  useAuthUser, useUpdateUser, useNewExpert, useAbortChat
 } from "#imports";
 import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
@@ -215,6 +215,10 @@ function chatAuthorName(name: string): string {
     return "A"
   }
   return name.substring(0, 1)
+}
+
+function abortChat() {
+  useAbortChat(<string>chatID.value)
 }
 
 onUpdated(() => {
