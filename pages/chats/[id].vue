@@ -51,20 +51,26 @@
           <div class="flex flex-col flex-1 justify-end p-4">
             <div class="grid grid-cols-12 gap-y-2 auto-rows-max">
               <div v-for="msg in messages"
-                   :class="[msg.author.id !== authUser?.uid ? 'col-start-6 col-end-13 max-sm:col-start-2' : 'col-start-1 col-end-8 max-sm:col-end-12']"
+                   :class="[!msg.author || msg.author.id !== authUser?.uid ? 'col-start-6 col-end-13 max-sm:col-start-2' : 'col-start-1 col-end-8 max-sm:col-end-12']"
                    class="p-3 rounded-md">
                 <div class="flex flex-row items-center">
-                  <div v-if="msg.author.avatarURL"
+                  <div v-if="msg.author && msg.author.avatarURL"
                        class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <img :src="msg.author.avatarURL" alt=""
                          class="h-8 w-8 rounded-full min-w-min"
                          referrerpolicy="no-referrer"/>
                   </div>
                   <div v-else
-                       class="flex items-center justify-center h-10 w-10 rounded-full bg-teal-600 flex-shrink-0 text-white">
-                    {{ chatAuthorName(msg.author.name) }}
+                       class="flex items-center justify-center h-10 w-10 rounded-full bg-white flex-shrink-0 text-white">
+                    <template v-if="msg.author">
+                      {{ chatAuthorName(msg.author.name) }}
+                    </template>
+                    <template v-else>
+                      <Icon class="h-8 w-8 rounded-full min-w-min" name="noto-v1:wolf" />
+                    </template>
                   </div>
-                  <div class="relative ml-3 text-sm bg-gray-100 py-2 px-4 shadow w-fit w-full">
+                  <div class="relative ml-3 text-sm  py-2 px-4 shadow w-fit w-full"
+                    :class="[msg.author ? 'bg-gray-100' : 'bg-teal-50']">
                     <div>{{ msg.text }}</div>
                     <div class="text-gray-400 text-xs">{{
                         new Date(msg.timestamp).toISOString().split('.')[0].split("T")[1]
@@ -169,7 +175,7 @@ import {
 } from "#imports";
 import {collection, doc, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
-import {IChat, IMessage, useSendMessage} from "~/composables/chats.client";
+import {IChat, IMessage, useSendMessage, useSendSystemMessage} from "~/composables/chats.client";
 
 definePageMeta({
   middleware: ['auth', 'chat']
@@ -283,8 +289,15 @@ onMounted(async () => {
     if (!snapshot.exists()) {
       return
     }
+
+    const lastStatus = chat.value?.status
+
     chat.value = <IChat>snapshot.data()
     summary.value = chat.value?.summary
+
+    if (lastStatus == ChatStatus.Pending && chat.value?.status == ChatStatus.Opened && chat.value.responser) {
+       useSendSystemMessage(chat.value.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
+    }
   })
 
   scrollBottom()

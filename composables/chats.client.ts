@@ -9,10 +9,13 @@ import {
     getDocs,
     query,
     where,
+    increment,
     orderBy, getFirestore,
 } from "firebase/firestore";
 import {useAuthUser} from "~/composables/auth.cient";
 import {useShowModal} from "~/composables/modal-window.client";
+import {useUpdateUser} from "~/composables/users.client";
+import {navigateTo} from "#imports"
 
 export enum ChatStatus {
     Off = "off",
@@ -48,7 +51,7 @@ interface IAuthor {
 
 export interface IMessage {
     text: string
-    author: IAuthor
+    author?: IAuthor
     timestamp: number
     chatID: string
     id?: string
@@ -138,6 +141,26 @@ export const useSendMessage = async (text: string, chatID: string) => {
     }
 }
 
+export const useSendSystemMessage = async (text: string, chatID: string) => {
+    const authUser = await useAuthUser()
+    if (!authUser) {
+        return
+    }
+
+    const newMessage = {
+        text: text,
+        timestamp: Date.now(),
+        chatID: chatID
+    };
+
+    try {
+        const docRef = await addDoc(collection(getFirestore(), "messages"), newMessage);
+        console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
+}
+
 export const useChat = async (chatID: string): Promise<IChat> => {
     const s = getFirestore()
 
@@ -169,14 +192,13 @@ export const useAbortChat = async (chatID: string) => {
         return
     }
 
-    // const s = getFirestore()
-    // const chat = await useChat(chatID)
+    const chat = await useChat(chatID)
 
-    let ok = await useShowModal("Abort chat", "Has your question been resolved?", "uil:comment-alt-question")
+    let ok = await useShowModal("Close chat", "Has your question been resolved?", "uil:comment-alt-question")
     if (ok) {
         ok = await useShowModal("Rate the Expert", "Thank the Expert?", "ps:tacos")
         if (ok) {
-            // await useUpdateUser(chat.responser, {tacos: increment(1)})
+            if (chat.responser) await useUpdateUser(chat.responser.id, {tacos: increment(1)})
         }
 
         await useUpdateChat(chatID, {
@@ -198,5 +220,5 @@ export const useAbortChat = async (chatID: string) => {
         status: ChatStatus.Closed,
     })
 
-    // TODO: на глагне
+    await navigateTo('/chats')
 }
