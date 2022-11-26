@@ -83,7 +83,7 @@ definePageMeta({
   middleware: ['auth']
 })
 
-import {navigateTo, ref, useCreateChat, useAuthUser, useSendMessage} from "#imports";
+import {navigateTo, ref, useCreateChat, useAuthUser, useSendMessage, ChatStatus} from "#imports";
 
 const topic = ref<string>()
 const message = ref<string>()
@@ -102,7 +102,8 @@ async function create() {
     createdAt: new Date().toISOString(),
     unMatchedParticipants: [],
     createdBy: authUser.uid,
-    status: "pending",
+    responser: "",
+    status: ChatStatus.Pending,
     topic: topic.value,
   })
   await useSendMessage(<string>message.value, chatID)

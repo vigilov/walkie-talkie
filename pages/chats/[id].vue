@@ -29,7 +29,7 @@
 
               <div class="flex">
               <span class="block">
-                <button
+                <button @click="newExpert"
                     class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     type="button">
                  <Icon class="text-xl" name="ic:baseline-person-search"/>
@@ -149,9 +149,8 @@ import {
   useState,
   useUser,
   useRuntimeConfig,
-  useDeleteChat,
   useRoute,
-  navigateTo, useAuthUser, useUpdateUser
+  useAuthUser, useUpdateUser, useNewExpert
 } from "#imports";
 import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
@@ -193,13 +192,8 @@ Notification.requestPermission().then(async (perms: string) => {
   console.log(perms)
 })
 
-async function deleteChat() {
-  if (!authUser) {
-    return
-  }
-
-  await useDeleteChat(<string>chatID.value)
-  await navigateTo("/chats")
+async function newExpert() {
+  await useNewExpert(<string>chatID.value)
 }
 
 async function send() {
