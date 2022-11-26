@@ -18,7 +18,8 @@ export default defineNuxtConfig({
         '@nuxt/content',
         '@nuxtjs/tailwindcss',
         'nuxt-headlessui',
-        'nuxt-icon'
+        'nuxt-icon',
+        '@tailwindcss/typography',
     ],
     headlessui: {
         prefix: 'Headless'
