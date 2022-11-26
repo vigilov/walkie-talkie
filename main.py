@@ -1,13 +1,17 @@
-import logging
+#!/usr/bin/env python3
+
 import sentence_transformers
 import firebase_admin
 import firebase_admin.credentials
+import logging
 from firebase_admin import firestore
 import signal
 import operator
 
 
-cred_path = "walkie-talkie-limassol-firebase.json"
+logging.root.setLevel(logging.INFO)
+
+cred_path = "walkie-talkie-limassol-firebase-adminsdk-hvxbi-663355e2dc.json"
 cred = firebase_admin.credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
