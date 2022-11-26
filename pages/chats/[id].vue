@@ -6,7 +6,7 @@
         <div ref="container" class="flex flex-col overflow-x-auto flex-1 relative">
           <div
               class="fixed top-16 pt-3 left-0 shadow-md pb-2 bg-white z-10 flex w-full lg:flex justify-center">
-            <div class="justify-between w-full max-w-7xl flex items-center flex-row px-6">
+            <div class="justify-between w-full max-w-7xl flex items-center flex-row px-6 max-sm:px-2">
             <span class="pr-2">
               <NuxtLink to="/chats">
                 <button
@@ -18,9 +18,9 @@
              </span>
 
               <div class="min-w-0 flex-1">
-              <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                {{ chat?.topic }}
-              </span>
+                <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                  {{ chat?.topic }}
+                </span>
               </div>
 
               <div class="flex">
@@ -29,7 +29,7 @@
                      :alt="chat?.responser?.name">
 
                 <ChatStatusPanel :id="chatID" class="mr-2"/>
-                <span class="block">
+                <span class="block" v-if="chat?.status !== ChatStatus.Resolved">
                   <button @click="newExpert"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -37,7 +37,7 @@
                   </button>
                 </span>
 
-                <span class="ml-3 block">
+                <span class="ml-3 block" v-if="chat?.status !== ChatStatus.Resolved">
                   <button @click="abortChat"
                           class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                           type="button">
@@ -159,7 +159,7 @@
 <script lang="ts" setup>
 import {IAuthUser} from "~/composables/auth.cient";
 import {
-  ChatStatus,
+  ChatStatus, navigateTo,
   onUnmounted,
   onUpdated,
   ref,
@@ -228,6 +228,8 @@ async function updateSummary() {
   await useUpdateChat(chat.value.id, {
     summary: summary.value
   })
+
+  await navigateTo("/chats")
 }
 
 async function send() {
