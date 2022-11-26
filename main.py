@@ -1,11 +1,15 @@
+import sentence_transformers
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-from firebase_admin import threading
+import firebase_admin.credentials
+import firebase_admin.firestore
+import signal
 
 cred_path = "walkie-talkie-limassol-firebase-adminsdk-hvxbi-663355e2dc.json"
-cred = credentials.Certificate(cred_path)
+cred = firebase_admin.credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
+collection_chats = firebase_admin.firestore.client().collection('chats')
+
+sentence_model = sentence_transformers.SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 '''
 // Database schema:
@@ -17,7 +21,8 @@ firebase_admin.initialize_app(cred)
       "responser": "",
       "createdAt": "",
       "createdBy": "",
-      "status": "panding|open|resolved",
+      "unMatchedParticipants": [],  // "users".[]."id"
+      "status": "pending|open|resolved",
       "summary": ""
   }],
   "messages": [{
@@ -39,16 +44,45 @@ firebase_admin.initialize_app(cred)
 '''
 
 
-# Create an Event for notifying main thread.
-callback_done = threading.Event()
-
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(col_snapshot, changes, read_time):
-    for doc in col_snapshot:
-        print(doc.id, doc.to_dict())
+    batch = firebase_admin.firestore.client().batch()
+
+    # Load all resolved chats
+    resolved_chats = collection_chats.where('status', '==', 'resolved').get()
+    # Calculate a embedding for each
+    precalculated_chats = []
+    for resolved_chat in resolved_chats:
+        first_message = resolved_chat.get('firstMessage')
+        first_message_tensor = sentence_model.encode(first_message, convert_to_tensor=True)
+        precalculated_chats.append((first_message_tensor, resolved_chat))
+
+    for pending_chat in col_snapshot:
+        first_message = pending_chat.get('firstMessage')
+        # Calculate a embedding for each chat with 1 member
+        first_message_tensor = sentence_model.encode(first_message, convert_to_tensor=True)
+        # Find the most relevant one
+        chats_by_relevance = sorted([(
+            sentence_transformers.util.pytorch_cos_sim(first_message_tensor, resolved_tensor),
+            resolved_chat
+        ) for resolved_tensor, resolved_chat in precalculated_chats],
+            key=lambda x: float(x[0][0][0])  # x be like pytorch.tensor([[0.42]])
+        )
+
+        # Set up the most relevant expert who has not yet tried to answer this question
+        for _, relevant_chat in chats_by_relevance:
+            if responder := relevant_chat.get("responser") in pending_chat.get("unMatchedParticipants"):
+                continue
+            batch.update(collection_chats.document(pending_chat.id), {'status': 'open', 'responder': responder})
+
+    batch.commit()
+    return
 
 
 # Watch the collection query
-query_watch = firestore.client().collection('chats').where('status', '==', 'pending').on_snapshot(on_snapshot)
+pending_chats = collection_chats.where('status', '==', 'pending')
+query_watch = pending_chats.on_snapshot(on_snapshot)
 
-callback_done.wait()
+# Run in background until SIGINT
+signal.signal(signal.SIGINT, lambda sig, frame: exit(0))
+signal.pause()
