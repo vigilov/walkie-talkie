@@ -114,7 +114,7 @@ import {
 } from "#imports";
 import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
-import {useSendMessage, IMessage, IChat, useChat} from "~/composables/chats.client";
+import {useSendMessage, IMessage, IChat} from "~/composables/chats.client";
 
 const container = ref()
 const message = ref<string>()
@@ -157,7 +157,7 @@ async function deleteChat() {
     return
   }
 
-  await useDeleteChat(authUser.uid, <string>chatID.value)
+  await useDeleteChat(<string>chatID.value)
   await navigateTo("/chats")
 }
 

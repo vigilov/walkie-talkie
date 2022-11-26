@@ -36,7 +36,7 @@ export interface IMessage {
     id?: string
 }
 
-export const useDeleteChat = async (uid: string, chatID: string) => {
+export const useDeleteChat = async (chatID: string) => {
     const s = getFirestore()
 
     try {
