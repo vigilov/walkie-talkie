@@ -20,7 +20,6 @@ export default defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         'nuxt-headlessui',
         'nuxt-icon',
-        '@tailwindcss/typography',
     ],
     tailwindcss: {
         config: {

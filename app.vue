@@ -8,4 +8,5 @@
 
 <style>
 @import "assets/theme.css";
+@import "assets/spinner.css";
 </style>
