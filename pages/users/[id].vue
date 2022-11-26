@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-100 flex-1 flex flex-col">
-    <div class="flex flex-col h-fit p-6 flex-1 max-md:p-0 border-gray-700 mx-auto max-w-7xl overflow-x-hidden w-full">
+    <div class="flex flex-col h-fit p-6 max-md:p-0 border-gray-700 mx-auto max-w-7xl overflow-x-hidden w-full">
       <div
           class="flex flex-col flex-1 items-stretch flex-shrink-0 rounded-md bg-white p-4 max-md:rounded-none max-md:p-0 bg-gray-50">
 
@@ -64,10 +64,6 @@
 
           </div>
         </div>
-        <div class="flex w-full h-full justify-center">
-          <WordCloud
-              :words="[['Car.Toyota.Yaris.Filter.Buy', 12], ['Food.Dumplings.Buy', 6], ['Yanmar.1gm10', 10], ['baz', 2]]"/>
-        </div>
       </div>
     </div>
   </div>
@@ -75,7 +71,6 @@
 
 <script setup lang="ts">
 import {definePageMeta, navigateTo, useAuthUser, useUpdateUser, useUser} from "#imports";
-import WordCloud from "~/components/tagcloud.client";
 import {IAuthUser} from "~/composables/auth.cient";
 import {IUser} from "~/composables/users.client";
 
@@ -85,8 +80,6 @@ definePageMeta({
 
 const auth = <IAuthUser>await useAuthUser()
 const user = <IUser>await useUser(auth.uid)
-
-console.log(user.roles)
 
 const isExpert = ref<boolean>(user.roles.includes("expert"))
 const isBusiness = ref<boolean>(user.roles.includes("business"))
@@ -110,7 +103,3 @@ async function save() {
 }
 
 </script>
-
-<style scoped>
-
-</style>

@@ -7,12 +7,8 @@
         <h2 class="text-2xl my-2 mb-4">
           Chats
         </h2>
-        <p class="mb-3 font-light text-gray-500 dark:text-gray-400">Some sescription what is chats. Link issues across
-          Jira and ingest data from other software development tools, so your IT support and operations teams have
-          richer contextual information to rapidly respond to requests, incidents, and changes.</p>
-        <p class="font-light text-gray-500 dark:text-gray-400">Deliver great service experiences fast - without the
-          complexity of traditional ITSM solutions.Accelerate critical development work, eliminate toil, and deploy
-          changes with ease, with a complete audit trail for every change.</p>
+        <p class="mb-3 font-light text-gray-500 dark:text-gray-400">Create a new chat to ask your question and find an
+          expert.</p>
 
 
         <div class="my-8">
@@ -33,17 +29,24 @@
             </time>
 
             <NuxtLink :to="`/chats/${chat.id}`"
-                      class="block w-full max-w-xl p-6 bg-white border border-gray-200 rounded-lg shadow-md flex flex-row justify-between">
-              <div>
+                      class="relative block w-full max-w-xl p-5 bg-white border border-gray-200 rounded-lg shadow-md flex flex-row justify-between">
+              <div class="w-full">
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{{ chat.topic }}</h5>
-                <p class="font-normal text-gray-700 ">{{ chat.firstMessage }}</p>
+                <p class="font-normal text-gray-700"
+                   :class="chat.status === ChatStatus.Closed || chat.status === ChatStatus.Resolved ? 'text-gray-400' : ''">
+                  {{ chat.firstMessage }}</p>
               </div>
-              <div
-                  class="hover:bg-teal-600 text-gray-400 rounded-full h-8 w-8 flex justify-center items-center hover:text-white"
-                  @click.prevent="removeChat(chat.id)">
-                <Icon name="uil:trash" class="text-2xl"/>
-              </div>
+              <div class="w-fit flex flex-col items-end justify-between ml-2">
+                <div
+                    class="hover:bg-teal-600 text-gray-400 rounded-full h-8 w-8 flex justify-center items-center hover:text-white"
+                    @click.prevent="removeChat(chat.id)">
+                  <Icon name="uil:trash" class="text-2xl"/>
+                </div>
 
+                <div class="flex flex-row min-w-max  mt-4">
+                  <ChatStatus :id="chat.id"/>
+                </div>
+              </div>
             </NuxtLink>
           </li>
         </ol>
@@ -53,8 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import {IChat, useChats, useDeleteChat} from "~/composables/chats.client";
+import {useChats, useDeleteChat} from "#imports";
 import {useAuthUser} from "~/composables/auth.cient";
+import {IChat} from "~/composables/chats.client";
 
 definePageMeta({
   middleware: ['auth']

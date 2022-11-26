@@ -14,6 +14,7 @@ import {
 import {useAuthUser} from "~/composables/auth.cient";
 
 export enum ChatStatus {
+    Off = "off",
     Opened = "opened",
     Pending = "pending",
     Resolved = "resolved",
@@ -24,7 +25,7 @@ export interface IChat {
     id: string
     topic: string
     unMatchedParticipants: Array<string>
-    responser: string
+    // responser: string
     firstMessage: string
     createdBy: string
     createdAt: string
@@ -110,7 +111,7 @@ export const useChat = async (chatID: string): Promise<IChat> => {
     return Promise.resolve(<IChat>await snap.data())
 }
 
-export const useNewExpert = async(chatID: string) => {
+export const useNewExpert = async (chatID: string) => {
     const authUser = await useAuthUser()
     if (!authUser) {
         return
@@ -119,15 +120,13 @@ export const useNewExpert = async(chatID: string) => {
     const s = getFirestore()
 
     const chat = await useChat(chatID)
-    chat.unMatchedParticipants.push(chat.responser)
-    chat.responser = ""
+    // chat.unMatchedParticipants.push(chat.responser)
     chat.status = ChatStatus.Pending
 
     console.log(chat)
 
-    await updateDoc(doc(s, 'chats', chatID ), {
+    await updateDoc(doc(s, 'chats', chatID), {
         unMatchedParticipants: chat.unMatchedParticipants,
-        responser: chat.responser,
         status: chat.status,
     })
 }
