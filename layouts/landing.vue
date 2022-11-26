@@ -28,7 +28,7 @@
             </button>
           </div>
           <div class="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-center lg:gap-x-12">
-            <a v-for="item in navigation" :key="item.name" :href="item.href" class="font-semibold text-gray-900 hover:text-gray-900">{{ item.name }}</a>
+            <NuxtLink v-for="item in navigation" :key="item.name" :to="item.href" class="font-semibold text-gray-900 hover:text-gray-900">{{ item.name }}</NuxtLink>
           </div>
           <div class="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
             <a href="#" class="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20">Log in</a>
@@ -74,9 +74,9 @@
 import { ref } from 'vue'
 
 const navigation = [
-  { name: 'Main', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'About us', href: '#' },
+  { name: 'Main', href: '/' },
+  { name: 'Features', href: '/features' },
+  { name: 'About us', href: '/about' },
 ]
 
 const mobileMenuOpen = ref(false)
