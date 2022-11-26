@@ -79,7 +79,7 @@
 
 <script setup>
 definePageMeta({
-  layout: null,
+  layout: "",
 })
 
 import {useSignInWithGoogle} from "~/composables/useUser"
