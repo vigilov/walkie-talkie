@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import {useAuthUser} from "~/composables/auth.cient";
 
-interface IChat {
+export interface IChat {
     id: string
     topic: string
     unMatchedParticipants: Array<string>

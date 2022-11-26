@@ -33,6 +33,23 @@
                   </div>
                 </div>
               </div>
+
+              <div v-if="chatStatus === 'pending'" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
+                <div class="flex flex-row items-center">
+                  <div class="spinner">
+                    <div class="double-bounce1"></div>
+                    <div class="double-bounce2"></div>
+                  </div>
+                  <div class="relative ml-3 text-sm bg-teal-50 py-2 px-4 shadow w-fit w-full">
+                    <div>We are looking for an expert</div>
+                    <div class="text-gray-400 text-xs">{{
+                        new Date().toISOString().split('.')[0].split("T")[1]
+                      }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -48,7 +65,6 @@
                     ref="input"
                     type="text" v-model="message"
                     class="flex w-full border rounded-md focus:outline-none focus:border-indigo-300 pl-4 h-10 bg-white"/>
-
               </div>
             </div>
             <div class="ml-4">
@@ -98,19 +114,20 @@ import {
 } from "#imports";
 import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
-import {useSendMessage, IMessage, useChat} from "~/composables/chats.client";
+import {useSendMessage, IMessage, IChat, useChat} from "~/composables/chats.client";
 
 const container = ref()
 const message = ref<string>()
 const chatID = useState("chat_id", () => useRoute().params.id)
 const messages = useState<Array<IMessage>>('counter', () => [])
 const authUser = <IAuthUser>await useAuthUser()
+const chatStatus = ref<string>()
 
 const user = await useUser(authUser.uid)
 const input = ref()
 
 let unsubscribe: Unsubscribe
-let userUnsubscribe: Unsubscribe
+let chatUnsubscribe: Unsubscribe
 
 Notification.requestPermission().then(async (perms: string) => {
   if (!user) {
@@ -134,8 +151,6 @@ Notification.requestPermission().then(async (perms: string) => {
   }
   console.log(perms)
 })
-
-const chat = await useChat(<string>chatID.value)
 
 async function deleteChat() {
   if (!authUser) {
@@ -178,32 +193,30 @@ onMounted(async () => {
     return
   }
 
-  userUnsubscribe = onSnapshot(doc(getFirestore(), "users", authUser.uid), (snap) => {
-    if (!snap.exists()) {
+  const q = query(
+      collection(getFirestore(), "messages"),
+      where("chatID", "==", chatID.value),
+      orderBy("timestamp", "asc"),
+  );
+
+  messages.value = []
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type !== "added") {
+        return
+      }
+      messages.value.push(<IMessage>change.doc.data());
+      if (messages.value.length > 10) {
+        messages.value.shift()
+      }
+    });
+  });
+
+  chatUnsubscribe = onSnapshot(doc(getFirestore(), "chats", <string>chatID.value), (snapshot) => {
+    if (!snapshot.exists()) {
       return
     }
-
-    const q = query(
-        collection(getFirestore(), "messages"),
-        where("chatID", "==", chatID.value),
-        orderBy("timestamp", "asc"),
-    );
-
-    if (unsubscribe) {
-      unsubscribe()
-    }
-    messages.value = []
-    unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type !== "added") {
-          return
-        }
-        messages.value.push(<IMessage>change.doc.data());
-        if (messages.value.length > 10) {
-          messages.value.shift()
-        }
-      });
-    });
+    chatStatus.value = (<IChat>snapshot.data()).status
   })
 
   scrollBottom()
@@ -213,8 +226,9 @@ onUnmounted(async () => {
   if (unsubscribe) {
     await unsubscribe()
   }
-  if (userUnsubscribe) {
-    await userUnsubscribe()
+
+  if (chatUnsubscribe) {
+    await chatUnsubscribe()
   }
 })
 </script>
