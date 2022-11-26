@@ -1,0 +1,39 @@
+{
+  "chats": [
+    {
+      "id": "123123",
+      "participants": [
+        ""
+      ],
+      "topic": "",
+      "firstMessage": "",
+      "createdAt": "",
+      "createdBy": "",
+      "status": "",
+      "summary": ""
+    }
+  ],
+  "messages": [
+    {
+      "id": "",
+      "chatID": "",
+      "text": "",
+      "createdAt": "",
+      "createdBy": ""
+    }
+  ],
+  "users": [
+    {
+      "id": "",
+      "role": "",
+      "keywords": [
+        ""
+      ],
+      "tacos": 1,
+      "devices": [
+        ""
+      ],
+      "bio": ""
+    }
+  ]
+}
