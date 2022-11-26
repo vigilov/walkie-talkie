@@ -1,7 +1,7 @@
 <template>
-  <div>
-    asdasd
-  </div>
+<div>
+  faq
+</div>
 </template>
 
 <script>
