@@ -1,3 +1,5 @@
+import logging
+
 import sentence_transformers
 import firebase_admin
 import firebase_admin.credentials
@@ -8,8 +10,10 @@ cred_path = "walkie-talkie-limassol-firebase-adminsdk-hvxbi-663355e2dc.json"
 cred = firebase_admin.credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
 collection_chats = firebase_admin.firestore.client().collection('chats')
+logging.info(f"{cred_path} registered")
 
 sentence_model = sentence_transformers.SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+logging.info("SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2') loaded")
 
 '''
 // Database schema:
@@ -22,7 +26,7 @@ sentence_model = sentence_transformers.SentenceTransformer('sentence-transformer
       "createdAt": "",
       "createdBy": "",
       "unMatchedParticipants": [],  // "users".[]."id"
-      "status": "pending|open|resolved",
+      "status": "pending|open|resolved|close",
       "summary": ""
   }],
   "messages": [{
@@ -46,6 +50,7 @@ sentence_model = sentence_transformers.SentenceTransformer('sentence-transformer
 
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(col_snapshot, changes, read_time):
+    logging.info(f"on_snapshot(col_snapshot) called, len(col_snapshot) == {len(col_snapshot)}")
     batch = firebase_admin.firestore.client().batch()
 
     # Load all resolved chats
@@ -70,18 +75,21 @@ def on_snapshot(col_snapshot, changes, read_time):
         )
 
         # Set up the most relevant expert who has not yet tried to answer this question
-        for _, relevant_chat in chats_by_relevance:
+        for score, relevant_chat in chats_by_relevance:
             if responder := relevant_chat.get("responser") in pending_chat.get("unMatchedParticipants"):
                 continue
             batch.update(collection_chats.document(pending_chat.id), {'status': 'open', 'responder': responder})
+            logging.info(f"pending chat {pending_chat.id} matched with chat {relevant_chat}, score == {score}")
 
     batch.commit()
+    logging.info("on_snapshot -> batch.commit(), new matches saved")
     return
 
 
 # Watch the collection query
 pending_chats = collection_chats.where('status', '==', 'pending')
 query_watch = pending_chats.on_snapshot(on_snapshot)
+logging.info('"on_snapshot" handler registered, application ready')
 
 # Run in background until SIGINT
 signal.signal(signal.SIGINT, lambda sig, frame: exit(0))
