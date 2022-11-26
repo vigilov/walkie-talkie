@@ -22,11 +22,17 @@ export enum ChatStatus {
     Closed = "closed"
 }
 
+export interface Responser {
+    name: string
+    photoURL: string
+    id: string
+}
+
 export interface IChat {
     id: string
     topic: string
     unMatchedParticipants: Array<string>
-    // responser: string
+    responser?: Responser
     firstMessage: string
     createdBy: string
     createdAt: string
@@ -128,13 +134,13 @@ export const useNewExpert = async (chatID: string) => {
     // chat.unMatchedParticipants.push(chat.responser)
     chat.status = ChatStatus.Pending
 
-    await useUpdateChat( chatID, {
+    await useUpdateChat(chatID, {
         unMatchedParticipants: chat.unMatchedParticipants,
         status: chat.status,
     })
 }
 
-export const useAbortChat = async(chatID: string) => {
+export const useAbortChat = async (chatID: string) => {
     const authUser = await useAuthUser()
     if (!authUser) {
         return

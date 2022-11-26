@@ -102,7 +102,6 @@ async function create() {
     createdAt: new Date().toISOString(),
     unMatchedParticipants: [],
     createdBy: authUser.uid,
-    responser: "",
     status: ChatStatus.Pending,
     topic: topic.value,
   })
