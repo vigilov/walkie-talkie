@@ -3,7 +3,6 @@ import {getFirestore, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 interface IUser {
     id: string
     devices: Array<string>
-    activeChat?: string
 }
 
 export const useUser = async (uid: string): Promise<IUser | undefined> => {

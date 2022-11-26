@@ -2,7 +2,7 @@ import {getAuth, signInWithPopup, GoogleAuthProvider} from "firebase/auth";
 import {navigateTo} from "#app";
 import {useSetUser, useUser} from "~/composables/users.client";
 
-interface IAuthUser {
+export interface IAuthUser {
     uid: string
     displayName: string
     photoURL: string

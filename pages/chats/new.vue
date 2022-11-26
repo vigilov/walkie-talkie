@@ -83,7 +83,7 @@ definePageMeta({
   middleware: ['auth']
 })
 
-import {navigateTo, ref, useUpdateUser, useCreateChat, useAuthUser, useSendMessage} from "#imports";
+import {navigateTo, ref, useCreateChat, useAuthUser, useSendMessage} from "#imports";
 
 const topic = ref<string>()
 const message = ref<string>()
@@ -106,7 +106,6 @@ async function create() {
     topic: topic.value,
   })
   await useSendMessage(<string>message.value, chatID)
-  await useUpdateUser(authUser.uid, {activeChat: chatID})
   await navigateTo(`/chats/${chatID}`)
 }
 </script>

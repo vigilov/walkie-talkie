@@ -2,7 +2,6 @@ import {
     doc,
     setDoc,
     addDoc,
-    updateDoc,
     collection,
     deleteDoc,
     getDocs,
@@ -41,11 +40,6 @@ export const useDeleteChat = async (uid: string, chatID: string) => {
 
     try {
         await deleteDoc(doc(s, "chats", chatID));
-        const userRef = doc(s, "users", uid);
-
-        await updateDoc(userRef, {
-            activeChat: null,
-        });
     } catch (e) {
         console.error(e)
     }

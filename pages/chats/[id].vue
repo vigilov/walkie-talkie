@@ -79,10 +79,10 @@
 </template>
 
 <script setup lang="ts">
-import {awaitExpression} from "@babel/types";
+import {IAuthUser} from "~/composables/auth.cient";
 
 definePageMeta({
-  middleware: ['auth']
+  middleware: ['auth', 'chat']
 })
 
 import {
@@ -90,7 +90,6 @@ import {
   onUpdated,
   ref,
   useState,
-  useSetUser,
   useUser,
   useRuntimeConfig,
   useDeleteChat,
@@ -105,10 +104,7 @@ const container = ref()
 const message = ref<string>()
 const chatID = useState("chat_id", () => useRoute().params.id)
 const messages = useState<Array<IMessage>>('counter', () => [])
-const authUser = await useAuthUser()
-if (!authUser) {
-  await navigateTo("/login")
-}
+const authUser = <IAuthUser>await useAuthUser()
 
 const user = await useUser(authUser.uid)
 const input = ref()
@@ -154,7 +150,7 @@ async function send() {
     return
   }
 
-  await useSendMessage(<string>message.value, user.value.activeChat)
+  await useSendMessage(<string>message.value, <string>chatID.value)
   message.value = "";
 }
 
