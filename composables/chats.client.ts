@@ -2,6 +2,7 @@ import {
     doc,
     setDoc,
     addDoc,
+    updateDoc,
     collection,
     deleteDoc,
     getDoc,
@@ -12,14 +13,22 @@ import {
 } from "firebase/firestore";
 import {useAuthUser} from "~/composables/auth.cient";
 
+export enum ChatStatus {
+    Opened = "opened",
+    Pending = "pending",
+    Resolved = "resolved",
+    Closed = "closed"
+}
+
 export interface IChat {
     id: string
     topic: string
     unMatchedParticipants: Array<string>
+    responser: string
     firstMessage: string
     createdBy: string
     createdAt: string
-    status: string
+    status: ChatStatus
 }
 
 interface IAuthor {
@@ -93,11 +102,32 @@ export const useSendMessage = async (text: string, chatID: string) => {
     }
 }
 
-export const useChat = async (id: string): Promise<IChat> => {
+export const useChat = async (chatID: string): Promise<IChat> => {
     const s = getFirestore()
 
-    const snap = await getDoc(doc(s, 'chats', id))
+    const snap = await getDoc(doc(s, 'chats', chatID))
 
     return Promise.resolve(<IChat>await snap.data())
 }
 
+export const useNewExpert = async(chatID: string) => {
+    const authUser = await useAuthUser()
+    if (!authUser) {
+        return
+    }
+
+    const s = getFirestore()
+
+    const chat = await useChat(chatID)
+    chat.unMatchedParticipants.push(chat.responser)
+    chat.responser = ""
+    chat.status = ChatStatus.Pending
+
+    console.log(chat)
+
+    await updateDoc(doc(s, 'chats', chatID ), {
+        unMatchedParticipants: chat.unMatchedParticipants,
+        responser: chat.responser,
+        status: chat.status,
+    })
+}
