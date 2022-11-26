@@ -1,10 +1,13 @@
-import logging
+#!/usr/bin/env python3
 
 import sentence_transformers
 import firebase_admin
 import firebase_admin.credentials
 import firebase_admin.firestore
+import logging
 import signal
+
+logging.root.setLevel(logging.INFO)
 
 cred_path = "walkie-talkie-limassol-firebase-adminsdk-hvxbi-663355e2dc.json"
 cred = firebase_admin.credentials.Certificate(cred_path)
