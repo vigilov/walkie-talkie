@@ -105,7 +105,7 @@
       </HeadlessDisclosurePanel>
     </HeadlessDisclosure>
 
-    <NuxtPage class="relative z-0"/>
+    <NuxtPage class="relative z-0 mt-16"/>
   </div>
 </template>
 
