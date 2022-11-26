@@ -2,12 +2,16 @@
 <template>
   <div class="isolate bg-white">
     <div class="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]">
-      <svg class="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:h-[42.375rem]" viewBox="0 0 1155 678" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path fill="url(#45de2b6b-92d5-4d68-a6a0-9b9b2abad533)" fill-opacity=".3" d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z" />
+      <svg
+          class="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:h-[42.375rem]"
+          viewBox="0 0 1155 678" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="url(#45de2b6b-92d5-4d68-a6a0-9b9b2abad533)" fill-opacity=".3"
+              d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z"/>
         <defs>
-          <linearGradient id="45de2b6b-92d5-4d68-a6a0-9b9b2abad533" x1="1155.49" x2="-78.208" y1=".177" y2="474.645" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#99f6e4"  offset="0"/>
-            <stop offset="1" stop-color="#2dd4bf" />
+          <linearGradient id="45de2b6b-92d5-4d68-a6a0-9b9b2abad533" x1="1155.49" x2="-78.208" y1=".177" y2="474.645"
+                          gradientUnits="userSpaceOnUse">
+            <stop stop-color="#99f6e4" offset="0"/>
+            <stop offset="1" stop-color="#2dd4bf"/>
           </linearGradient>
         </defs>
       </svg>
@@ -18,20 +22,26 @@
           <div class="flex lg:min-w-0 lg:flex-1" aria-label="Global">
             <a href="#" class="-m-1.5 p-1.5">
               <span class="sr-only">Walkie-Talkie</span>
-              <NuxtLink to="/"><img class="h-4" src="logo_text_teal.svg" alt="" /></NuxtLink>
+              <NuxtLink to="/"><img class="h-4" src="/logo_text_teal.svg" alt=""/></NuxtLink>
             </a>
           </div>
           <div class="flex lg:hidden">
-            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = true">
+            <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                    @click="mobileMenuOpen = true">
               <span class="sr-only">Open main menu</span>
-              <Icon name="ic:baseline-table-rows" />
+              <Icon name="ic:baseline-table-rows"/>
             </button>
           </div>
           <div class="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-center lg:gap-x-12">
-            <NuxtLink v-for="item in navigation" :key="item.name" :to="item.href" class="font-semibold text-gray-900 hover:text-gray-900">{{ item.name }}</NuxtLink>
+            <NuxtLink v-for="item in navigation" :key="item.name" :to="item.href"
+                      class="font-semibold text-gray-900 hover:text-gray-900">{{ item.name }}
+            </NuxtLink>
           </div>
           <div class="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
-            <NuxtLink to="/chats" class="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20">Log in</NuxtLink>
+            <NuxtLink to="/chats"
+                      class="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+              Log in
+            </NuxtLink>
           </div>
         </nav>
         <HeadlessDialog as="div" @close="mobileMenuOpen = false" :open="mobileMenuOpen">
@@ -40,23 +50,31 @@
               <div class="flex">
                 <a href="#" class="-m-1.5 p-1.5">
                   <span class="sr-only">Walkie-Talkie</span>
-                  <img class="h-8" src="https://tailwindui.com/img/logos/mark.svg?color=teal&shade=600" alt="" />
+                  <img class="h-8" src="https://tailwindui.com/img/logos/mark.svg?color=teal&shade=600" alt=""/>
                 </a>
               </div>
               <div class="flex">
-                <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
+                <button type="button"
+                        class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                        @click="mobileMenuOpen = false">
                   <span class="sr-only">Close menu</span>
-                  <Icon name="ic:baseline-close" />
+                  <Icon name="ic:baseline-close"/>
                 </button>
               </div>
             </div>
             <div class="mt-6 flow-root">
               <div class="-my-6 divide-y divide-gray-500/10">
                 <div class="space-y-2 py-6">
-                  <a v-for="item in navigation" :key="item.name" :href="item.href" class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-400/10">{{ item.name }}</a>
+                  <a v-for="item in navigation" :key="item.name" :href="item.href"
+                     class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-400/10">{{
+                      item.name
+                    }}</a>
                 </div>
                 <div class="py-6">
-                  <NuxtLink to="/chats" class="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-400/10">Log in</NuxtLink>
+                  <NuxtLink to="/chats"
+                            class="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-6 text-gray-900 hover:bg-gray-400/10">
+                    Log in
+                  </NuxtLink>
                 </div>
               </div>
             </div>
@@ -65,18 +83,18 @@
       </div>
     </div>
     <main>
-      <NuxtPage />
+      <NuxtPage/>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from "#imports";
 
 const navigation = [
-  { name: 'Main', href: '/' },
-  { name: 'Features', href: '/features' },
-  { name: 'About us', href: '/about' },
+  {name: 'Main', href: '/'},
+  {name: 'Features', href: '/features'},
+  {name: 'About us', href: '/about'},
 ]
 
 const mobileMenuOpen = ref(false)
