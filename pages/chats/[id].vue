@@ -2,45 +2,52 @@
   <div class="bg-gray-100 flex-1 flex flex-col">
     <div class="flex flex-col h-fit p-6 flex-1 max-md:p-0 border-gray-700 mx-auto max-w-7xl overflow-x-hidden w-full">
       <div
-          class="flex flex-col items-stretch flex-1 flex-shrink-0 rounded-md bg-white p-4 max-md:rounded-none max-md:p-0">
-        <div ref="container" class="flex flex-col overflow-x-auto flex-1 m-4 p-2 max-md:p-2 relative">
-          <div class="lg:flex lg:items-center lg:justify-between">
-            <span class="sm:ml-3 pr-2">
+          class="flex flex-col items-stretch flex-1 flex-shrink-0 rounded-md bg-white max-md:rounded-none max-md:p-0 w-full">
+        <div ref="container" class="flex flex-col overflow-x-auto flex-1 relative">
+          <div
+              class="fixed top-16 pt-3 left-0 shadow-md pb-2 bg-white z-10 flex w-full lg:flex justify-center">
+            <div class="justify-between w-full max-w-7xl flex items-center flex-row px-6">
+            <span class="pr-2">
               <NuxtLink to="/chats">
                 <button
                     class="inline-flex items-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     type="button">
-                  <Icon name="ic:baseline-arrow-back" />
+                  <Icon name="ic:baseline-arrow-back"/>
                 </button>
               </NuxtLink>
-               </span>
+             </span>
 
-            <div class="min-w-0 flex-1">
-              <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                {{ chat?.topic }}</h2>
-            </div>
+              <div class="min-w-0 flex-1">
+              <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                {{ chat?.topic }}
+              </span>
+                <!--              :-->
+                <!--              <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">-->
+                <!--                {{ chat }}-->
+                <!--              </span>-->
+              </div>
 
-            <div class="mt-5 flex lg:mt-0 lg:ml-4">
+              <div class="flex">
               <span class="block">
                 <button
                     class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     type="button">
-                  <Icon name="ic:baseline-person-search" />
-                  New Expert
+                 <Icon class="text-xl" name="ic:baseline-person-search"/>
                 </button>
               </span>
 
-              <span class="ml-3 block">
+                <span class="ml-3 block">
                 <button
                     class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     type="button">
-                  <Icon name="material-symbols:delete-forever-outline"/>
-                  Close Question
+                  <Icon class="text-xl" name="material-symbols:delete-forever-outline"/>
                 </button>
                </span>
+              </div>
             </div>
           </div>
-          <div class="flex flex-col flex-1 justify-end">
+
+          <div class="flex flex-col flex-1 justify-end p-4">
             <div class="grid grid-cols-12 gap-y-2 auto-rows-max">
               <div v-for="msg in messages"
                    :class="[msg.author.id !== authUser?.uid ? 'col-start-6 col-end-13 max-sm:col-start-2' : 'col-start-1 col-end-8 max-sm:col-end-12']"
