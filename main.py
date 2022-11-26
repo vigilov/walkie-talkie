@@ -103,7 +103,7 @@ def on_snapshot(col_snapshot, changes, read_time):
             if responder := user["user"]["id"] in pending_chat.get("unMatchedParticipants"):
                 continue
 
-            batch.update(collection_chats.document(pending_chat.id), {'status': 'opened', 'responser': user})
+            batch.update(collection_chats.document(pending_chat.id), {'status': 'opened', 'responser': user["user"]})
             logging.info(f"pending chat {pending_chat.id}"
                          f" matched with user {user['user']['id']}, score == {user['rate']}")
 
