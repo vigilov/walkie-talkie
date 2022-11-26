@@ -1,10 +1,12 @@
 import {getFirestore, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import {integer} from "vscode-languageserver-types";
 
 export interface IUser {
     id: string
     devices: Array<string>
     bio?: string
     roles: Array<string>
+    tacos: bigint
 }
 
 export const useUser = async (uid: string): Promise<IUser | undefined> => {

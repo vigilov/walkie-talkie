@@ -9,9 +9,12 @@ import {
     getDocs,
     query,
     where,
-    orderBy, getFirestore
+    increment,
+    orderBy, getFirestore,
 } from "firebase/firestore";
 import {useAuthUser} from "~/composables/auth.cient";
+import {useShowModal} from "~/composables/modal-window.client";
+import {useUpdateUser} from "~/composables/users.client";
 
 export enum ChatStatus {
     Off = "off",
@@ -82,6 +85,11 @@ export const useChats = async (uid?: string): Promise<Array<IChat>> => {
     return Promise.resolve(chats)
 }
 
+export const useUpdateChat = async (uid: string, update: any) => {
+    const ref = doc(getFirestore(), "chats", uid);
+    await updateDoc(ref, update);
+}
+
 export const useSendMessage = async (text: string, chatID: string) => {
     const authUser = await useAuthUser()
     if (!authUser) {
@@ -123,10 +131,46 @@ export const useNewExpert = async (chatID: string) => {
     // chat.unMatchedParticipants.push(chat.responser)
     chat.status = ChatStatus.Pending
 
-    console.log(chat)
-
-    await updateDoc(doc(s, 'chats', chatID), {
+    await useUpdateChat( chatID, {
         unMatchedParticipants: chat.unMatchedParticipants,
         status: chat.status,
     })
+}
+
+export const useAbortChat = async(chatID: string) => {
+    const authUser = await useAuthUser()
+    if (!authUser) {
+        return
+    }
+
+    const s = getFirestore()
+    const chat = await useChat(chatID)
+
+    let ok = await useShowModal("Abort chat", "Has your question been resolved?", "uil:comment-alt-question")
+    if (ok) {
+        ok = await useShowModal("Rate the Expert", "Thank the Expert?", "ps:tacos")
+        if (ok) {
+            await useUpdateUser(chat.responser, {tacos: increment(1)})
+        }
+
+        await useUpdateChat(chatID, {
+            status: ChatStatus.Resolved,
+        })
+
+        // TODO: создание суммаризации
+
+        return
+    }
+
+    ok = await useShowModal("Find another Expert", "Do you want to find another Expert?", "material-symbols:person-search-outline")
+    if (ok) {
+        await useNewExpert(chatID)
+        return
+    }
+
+    await useUpdateChat(chatID, {
+        status: ChatStatus.Closed,
+    })
+
+    // TODO: на глагне
 }

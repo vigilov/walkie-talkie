@@ -108,11 +108,15 @@
 
     <NuxtPage class="relative z-0 mt-16"/>
   </div>
+
+  <ModalWindow />
+
 </template>
 
 <script setup lang="ts">
 import {useRoute} from "#imports";
 import {IAuthUser, useAuthUser, useSignOut} from "~/composables/auth.cient";
+import {ModalWindow} from "#components";
 
 const auth = <IAuthUser>await useAuthUser()
 
