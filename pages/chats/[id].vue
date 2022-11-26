@@ -56,7 +56,7 @@
               <div v-for="msg in messages"
                    :class="[!msg.author || msg.author.id !== authUser?.uid ? 'col-start-6 col-end-13 max-sm:col-start-2' : 'col-start-1 col-end-8 max-sm:col-end-12']"
                    class="p-3 rounded-md">
-                <div class="flex flex-row items-center" v-if="msg.author || (!msg.author && authUser.uid === chat.createdBy) ">
+                <div class="flex flex-row items-center">
                   <div v-if="msg.author && msg.author.avatarURL"
                        class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <img :src="msg.author.avatarURL" alt=""
@@ -263,7 +263,7 @@ function abortChat() {
 }
 
 function IsPanelEnabled(): boolean {
-  const c = chat.value
+  const c = chat
 
   if (!c) {
     return false
@@ -295,7 +295,11 @@ onMounted(async () => {
       if (change.type !== "added") {
         return
       }
-      messages.value.push(<IMessage>change.doc.data());
+      const m = <IMessage>change.doc.data()
+      if (!m.author) {
+        return
+      }
+      messages.value.push(m);
       if (messages.value.length > 10) {
         messages.value.shift()
       }
