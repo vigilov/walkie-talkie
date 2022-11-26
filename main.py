@@ -21,6 +21,7 @@ collection_chats = db.collection('chats')
 collection_messages = db.collection('messages')
 logging.info(f"{cred_path} registered")
 
+# Change to https://huggingface.co/sentence-transformers/multi-qa-MiniLM-L6-cos-v1 ?
 sentence_model = sentence_transformers.SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 logging.info("SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2') loaded")
 
