@@ -35,10 +35,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref, useState} from '#imports'
+import {useState} from '#imports'
 import {IModalWindow} from "~/composables/modal-window.client";
 
-// const props = defineProps(['open']);
 const modal = useState("modal", (): IModalWindow => <IModalWindow>{opened:false})
 
 </script>

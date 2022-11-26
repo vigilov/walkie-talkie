@@ -177,7 +177,8 @@ export const useNewExpert = async (chatID: string) => {
 
 
     const chat = await useChat(chatID)
-    // chat.unMatchedParticipants.push(chat.responser)
+    if (chat.responser)
+        chat.unMatchedParticipants.push(chat.responser.id)
     chat.status = ChatStatus.Pending
 
     await useUpdateChat(chatID, {
@@ -194,9 +195,14 @@ export const useAbortChat = async (chatID: string) => {
 
     const chat = await useChat(chatID)
 
-    let ok = await useShowModal("Close chat", "Has your question been resolved?", "uil:comment-alt-question")
+    let ok = await useShowModal("Aborting", "Do you want to close the chat?", "ion:ios-close-circle-outline")
+    if (!ok) {
+        return
+    }
+
+    ok = await useShowModal("Closing the chat", "Has your question been resolved?", "uil:comment-alt-question")
     if (ok) {
-        ok = await useShowModal("Rate the Expert", "Thank the Expert?", "ps:tacos")
+        ok = await useShowModal("Rating the Expert", "Thank the Expert?", "ps:tacos")
         if (ok) {
             if (chat.responser) await useUpdateUser(chat.responser.id, {tacos: increment(1)})
         }
@@ -205,12 +211,10 @@ export const useAbortChat = async (chatID: string) => {
             status: ChatStatus.Resolved,
         })
 
-        // TODO: создание суммаризации
-
         return
     }
 
-    ok = await useShowModal("Find another Expert", "Do you want to find another Expert?", "material-symbols:person-search-outline")
+    ok = await useShowModal("Finding another Expert", "Do you want to find another Expert?", "material-symbols:person-search-outline")
     if (ok) {
         await useNewExpert(chatID)
         return
