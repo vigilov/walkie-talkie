@@ -24,7 +24,6 @@ import {ChatStatus, onMounted} from "#imports";
 import {doc, getFirestore, onSnapshot, Unsubscribe} from "firebase/firestore";
 import {IChat} from "~/composables/chats.client";
 
-
 const props = defineProps(['id'])
 const chat = ref<IChat>(<IChat>{status: ChatStatus.Off})
 

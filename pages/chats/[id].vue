@@ -20,32 +20,30 @@
               <div class="min-w-0 flex-1">
               <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                 {{ chat?.topic }}
-                <span v-if="chat?.responser?.name"> :
-                  {{ chat?.responser?.name }}
-                <img class="w-10 h-10 rounded-full inline" v-if="chat?.responser?.photoURL" :src="chat?.responser?.photoURL"
-                     :alt="chat?.responser?.name">
-
-                </span>
-
               </span>
               </div>
 
               <div class="flex">
-              <span class="block">
-                <button @click="newExpert"
-                        class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                        type="button">
-                 <Icon class="text-xl" name="ic:baseline-person-search"/>
-                </button>
-              </span>
+                <img class="w-10 h-10 rounded-full inline mr-2" v-if="chat?.responser?.photoURL"
+                     :src="chat?.responser?.photoURL"
+                     :alt="chat?.responser?.name">
+
+                <ChatStatusPanel :id="chatID" class="mr-2"/>
+                <span class="block">
+                  <button @click="newExpert"
+                          class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                          type="button">
+                   <Icon class="text-xl" name="ic:baseline-person-search"/>
+                  </button>
+                </span>
 
                 <span class="ml-3 block">
-                <button @click="abortChat"
-                        class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                        type="button">
-                  <Icon class="text-xl" name="material-symbols:delete-forever-outline"/>
-                </button>
-               </span>
+                  <button @click="abortChat"
+                          class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                          type="button">
+                    <Icon class="text-xl" name="material-symbols:delete-forever-outline"/>
+                  </button>
+                </span>
               </div>
             </div>
           </div>
