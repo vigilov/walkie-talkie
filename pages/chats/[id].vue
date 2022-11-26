@@ -20,26 +20,29 @@
               <div class="min-w-0 flex-1">
               <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                 {{ chat?.topic }}
+                <span v-if="chat?.responser?.name"> :
+                  {{ chat?.responser?.name }}
+                <img class="w-10 h-10 rounded-full inline" v-if="chat?.responser?.photoURL" :src="chat?.responser?.photoURL"
+                     :alt="chat?.responser?.name">
+
+                </span>
+
               </span>
-                <!--              :-->
-                <!--              <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">-->
-                <!--                {{ chat }}-->
-                <!--              </span>-->
               </div>
 
               <div class="flex">
               <span class="block">
                 <button @click="newExpert"
-                    class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                    type="button">
+                        class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                        type="button">
                  <Icon class="text-xl" name="ic:baseline-person-search"/>
                 </button>
               </span>
 
                 <span class="ml-3 block">
                 <button @click="abortChat"
-                    class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                    type="button">
+                        class="inline-flex items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                        type="button">
                   <Icon class="text-xl" name="material-symbols:delete-forever-outline"/>
                 </button>
                </span>
@@ -93,7 +96,7 @@
           </div>
         </div>
 
-        <div class="flex">
+        <div class="flex" v-if="chat?.status !== ChatStatus.Resolved">
           <form
               action="#"
               class="flex flex-row self-end items-center h-16 rounded-md bg-teal-800 w-full px-4 max-md:rounded-none"
@@ -130,6 +133,20 @@
             </div>
           </form>
         </div>
+        <div v-else-if="chat?.status === ChatStatus.Resolved" class="w-full p-4">
+          <h4 class="text-gray-500">
+            Summary:
+          </h4>
+          <textarea rows="4"
+                    class="block mt-2 p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500"
+                    placeholder="Write your thoughts here..."
+                    v-model="summary"></textarea>
+          <button @click.prevent="updateSummary"
+                  class="inline-flex mt-4 items-center rounded-md border border-gray-300 bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                  type="button">
+            Save
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -137,33 +154,37 @@
 
 <script lang="ts" setup>
 import {IAuthUser} from "~/composables/auth.cient";
+import {
+  ChatStatus,
+  onUnmounted,
+  onUpdated,
+  ref,
+  useAbortChat,
+  useAuthUser,
+  useNewExpert,
+  useRoute,
+  useRuntimeConfig,
+  useState,
+  useUpdateChat,
+  useUpdateUser,
+  useUser
+} from "#imports";
+import {collection, doc, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
+import {getMessaging, getToken} from "@firebase/messaging";
+import {IChat, IMessage, useSendMessage} from "~/composables/chats.client";
 
 definePageMeta({
   middleware: ['auth', 'chat']
 })
-
-import {
-  onUnmounted,
-  onUpdated,
-  ref,
-  useState,
-  useUser,
-  useRuntimeConfig,
-  useRoute,
-  useAuthUser, useUpdateUser, useNewExpert, useAbortChat
-} from "#imports";
-import {collection, where, query, onSnapshot, orderBy, doc, Unsubscribe, getFirestore} from "firebase/firestore";
-import {getMessaging, getToken} from "@firebase/messaging";
-import {useSendMessage, IMessage, IChat} from "~/composables/chats.client";
 
 const container = ref()
 const message = ref<string>()
 const chatID = useState("chat_id", () => useRoute().params.id)
 const messages = useState<Array<IMessage>>('counter', () => [])
 const authUser = <IAuthUser>await useAuthUser()
-const chat = ref<IChat>()
-
 const user = await useUser(authUser.uid)
+const chat = ref<IChat>()
+const summary = ref<string>()
 const input = ref()
 
 let unsubscribe: Unsubscribe
@@ -187,13 +208,22 @@ Notification.requestPermission().then(async (perms: string) => {
     } catch (e) {
       console.log("can't update user", e)
     }
-
   }
   console.log(perms)
 })
 
 async function newExpert() {
   await useNewExpert(<string>chatID.value)
+}
+
+async function updateSummary() {
+  if (!chat.value) {
+    return
+  }
+
+  await useUpdateChat(chat.value.id, {
+    summary: summary.value
+  })
 }
 
 async function send() {
@@ -256,6 +286,7 @@ onMounted(async () => {
       return
     }
     chat.value = <IChat>snapshot.data()
+    summary.value = chat.value?.summary
   })
 
   scrollBottom()

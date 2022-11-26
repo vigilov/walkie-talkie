@@ -36,6 +36,7 @@ export interface IChat {
     firstMessage: string
     createdBy: string
     createdAt: string
+    summary?: string
     status: ChatStatus
 }
 
