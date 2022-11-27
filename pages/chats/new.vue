@@ -103,8 +103,9 @@ async function create() {
     createdBy: authUser.uid,
     status: ChatStatus.Pending,
     topic: topic.value,
+    newMessages: 0,
   })
-  await useSendMessage(<string>message.value, chatID)
+  await useSendMessage(chatID, <string>message.value)
   await navigateTo(`/chats/${chatID}`)
 }
 </script>

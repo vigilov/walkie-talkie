@@ -51,7 +51,8 @@
           </li>
         </ol>
 
-        <h3 class="mb-4 text-2xl text-base font-normal text-gray-500 mt-4q" v-if="othersChats.length > 0">Others Chats</h3>
+        <h3 class="mb-4 text-2xl text-base font-normal text-gray-500 mt-4q" v-if="othersChats.length > 0">Others
+          Chats</h3>
 
         <ol class="relative border-l border-gray-200 dark:border-gray-300">
           <li class="mb-10 ml-4" v-for="chat in othersChats">
@@ -107,5 +108,6 @@ async function removeChat(id: string) {
   await navigateTo("/chats")
 
   myChats.value = await useMyChats(authUser?.uid)
+  othersChats.value = await useOthersChats(authUser?.uid)
 }
 </script>

@@ -221,7 +221,6 @@ Notification.requestPermission().then(async (perms: string) => {
       console.log("can't update user", e)
     }
   }
-  console.log(perms)
 })
 
 async function newExpert() {
@@ -246,7 +245,30 @@ async function send() {
     return
   }
 
-  await useSendMessage(<string>message.value, <string>chatID.value)
+  await useSendMessage(<string>chatID.value, <string>message.value)
+
+  const amIResolver = chat.value.createdBy != authUser.uid
+  if (amIResolver) {
+    if (!chat.value.newMessages) {
+      chat.value.newMessages = 1
+    } else {
+      chat.value.newMessages += 1
+    }
+    await useUpdateChat(chat.value.id, {
+      newMessages: chat.value.newMessages
+    })
+  } else if (chat.value.responser) {
+    if (!chat.value.responser.newMessages) {
+      chat.value.responser.newMessages = 1
+    } else {
+      chat.value.responser.newMessages += 1
+    }
+
+    await useUpdateChat(chat.value.id, {
+      responser: {newMessages: chat.value.responser.newMessages}
+    })
+  }
+
   message.value = "";
 }
 
@@ -283,6 +305,20 @@ function IsAuthUserMessage(msg: IMessage): boolean {
   return msg.author?.id !== authUser?.uid
 }
 
+async function unCountMessages() {
+  const amIResolver = chat.value.createdBy != authUser.uid
+
+  if (amIResolver) {
+    await useUpdateChat(chat.value.id, {
+      responser: {newMessages: 0}
+    })
+  } else if (chat.value.responser) {
+    await useUpdateChat(chat.value.id, {
+      newMessages: 0
+    })
+  }
+}
+
 onUpdated(() => {
   scrollBottom()
 })
@@ -293,6 +329,8 @@ onMounted(async () => {
   if (!authUser) {
     return
   }
+
+  await unCountMessages()
 
   const q = query(
       collection(getFirestore(), "messages"),
@@ -349,5 +387,7 @@ onUnmounted(async () => {
   if (chatUnsubscribe) {
     await chatUnsubscribe()
   }
+
+  await unCountMessages()
 })
 </script>
