@@ -56,7 +56,7 @@ interface IAuthor {
 export interface IMessage {
     text: string
     author?: IAuthor
-    timestamp: number
+    timestamp: string
     chatID: string
     id?: string
 }
@@ -125,7 +125,7 @@ export const useUpdateChat = async (uid: string, update: any) => {
     await updateDoc(ref, update);
 }
 
-export const useGetChat = async (uid: string) : Promise<IChat> => {
+export const useGetChat = async (uid: string): Promise<IChat> => {
     const snap = await getDoc(doc(getFirestore(), "chats", uid));
     const chat = <IChat>snap.data()
     return Promise.resolve(chat);
@@ -140,7 +140,7 @@ export const useSendMessage = async (chatID: string, text: string) => {
     const newMessage = {
         text: text,
         author: {name: authUser.displayName, avatarURL: authUser.photoURL, id: authUser.uid},
-        timestamp: Date.now(),
+        timestamp: new Date().toISOString(),
         chatID: chatID
     };
 

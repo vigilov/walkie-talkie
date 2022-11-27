@@ -11,18 +11,18 @@
         </p>
       </div>
       <div class="shadow p-6  bg-white rounded max-sm:rounded-none">
-        <form action="#" class="space-y-6" method="POST">
+        <form @click.prevent="" class="space-y-6" method="POST">
           <div class="-space-y-px rounded-md">
             <div class="py-2">
-              <label for="email-address">Email address</label>
-              <input id="email-address" name="email" type="email" autocomplete="email" required=""
-                     class="mt-2 relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+              <label for="email-address">Email address. in developing</label>
+              <input id="email-address" name="email" type="email" autocomplete="email" required="" disabled="disabled"
+                     class="mt-2 relative bg-gray-200 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
                      placeholder="Email address"/>
             </div>
             <div class="py-2">
-              <label for="password">Password</label>
-              <input id="password" name="password" type="password" autocomplete="current-password" required=""
-                     class="mt-2 relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+              <label for="password">Password. in developing</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required="" disabled="disabled"
+                     class="mt-2 relative block bg-gray-200 w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
                      placeholder="Password"/>
             </div>
           </div>
@@ -30,7 +30,7 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox"
-                     class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"/>
+                     class="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 bg-gray-200"/>
               <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
             </div>
 
@@ -40,7 +40,7 @@
           </div>
 
           <div>
-            <button type="submit" class="
+            <button type="submit" class=" bg-gray-200
           group
           relative
           flex w-full

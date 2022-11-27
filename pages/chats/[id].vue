@@ -79,7 +79,7 @@
                        :class="[IsSystemMessage(msg) ? 'bg-teal-50' : 'bg-gray-100']">
                     <div>{{ msg.text }}</div>
                     <div class="text-gray-400 text-xs">{{
-                        new Date(msg.timestamp).toISOString().split('.')[0].split("T")[1]
+                        msg.timestamp.split('.')[0].split("T")[1]
                       }}
                     </div>
                   </div>
@@ -314,9 +314,9 @@ async function unCountMessages() {
   if (amIResolver) {
     if (responser)
       responser.newMessages = 0
-      await useUpdateChat(chat.value.id, {
-        responser: responser
-      })
+    await useUpdateChat(chat.value.id, {
+      responser: responser
+    })
   } else if (responser) {
     await useUpdateChat(chat.value.id, {
       newMessages: 0
