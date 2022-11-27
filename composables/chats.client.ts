@@ -161,7 +161,7 @@ export const useSendSystemMessage = async (text: string, chatID: string) => {
 
     const newMessage = {
         text: text,
-        timestamp: Date.now(),
+        timestamp: new Date().toISOString(),
         chatID: chatID
     };
 
@@ -192,7 +192,7 @@ export const useNewExpert = async (chatID: string) => {
         chat.unMatchedParticipants.push(chat.responser.id)
         chat.responser = undefined
     }
-    if (chat.summarizedChatId){
+    if (chat.summarizedChatId) {
         chat.unMatchedSummarizedChats.push(chat.summarizedChatId)
         chat.summarizedChatId = undefined
     }
