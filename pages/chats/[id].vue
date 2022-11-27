@@ -24,6 +24,7 @@
               </div>
 
               <div class="flex">
+
                 <img class="w-10 h-10 rounded-full inline mr-2" referrerpolicy="no-referrer"
                      v-if="chat.responser?.photoURL"
                      :src="chat.responser?.photoURL"
@@ -308,11 +309,14 @@ function IsAuthUserMessage(msg: IMessage): boolean {
 async function unCountMessages() {
   const amIResolver = chat.value.createdBy != authUser.uid
 
+  const responser = chat.value.responser
   if (amIResolver) {
-    await useUpdateChat(chat.value.id, {
-      responser: {newMessages: 0}
-    })
-  } else if (chat.value.responser) {
+    if (responser)
+      responser.newMessages = 0
+      await useUpdateChat(chat.value.id, {
+        responser: responser
+      })
+  } else if (responser) {
     await useUpdateChat(chat.value.id, {
       newMessages: 0
     })
