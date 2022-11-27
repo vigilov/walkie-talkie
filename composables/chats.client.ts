@@ -19,7 +19,8 @@ import {navigateTo} from "#imports"
 
 export enum ChatStatus {
     Off = "off",
-    Opened = "opened",
+    Opened = "opened", // founded from experts
+    Founded = "founded", // founded in summarized
     Pending = "pending",
     Resolved = "resolved",
     Closed = "closed"
@@ -203,12 +204,12 @@ export const useAbortChat = async (chatID: string) => {
 
     const chat = await useChat(chatID)
 
-    let ok = await useShowModal("Aborting", "Do you want to close the chat?", "ion:ios-close-circle-outline")
+    let ok = await useShowModal("Closing the chat", "Do you want to close the chat?", "ion:ios-close-circle-outline")
     if (!ok) {
         return
     }
 
-    ok = await useShowModal("Closing the chat", "Has your question been resolved?", "uil:comment-alt-question")
+    ok = await useShowModal("Question solvation", "Has your question been resolved?", "uil:comment-alt-question")
     if (ok) {
         ok = await useShowModal("Rating the Expert", "Thank the Expert?", "ps:tacos")
         if (ok) {

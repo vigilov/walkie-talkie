@@ -14,7 +14,7 @@
     </template>
     <template v-else-if="chat?.status === ChatStatus.Closed">
       <Icon name="iconoir:cancel" class="text-red-700 text-xl" />
-      Wasn't solve
+      Not solved
     </template>
   </div>
 </template>
