@@ -61,10 +61,11 @@
                   <div v-if="IsSystemMessage(msg)"
                        class="flex items-center justify-center h-10 w-10 rounded-full bg-white flex-shrink-0 text-white">
                     <img src="/logo_chat.png" class="h-8 w-8 rounded-r-full min-w-min"
-                         referrerpolicy="no-referrer" />
+                         referrerpolicy="no-referrer"/>
                   </div>
-                  <div v-else class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                    <template v-if="msg.author.avatarURL" >
+                  <div v-else
+                       class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <template v-if="msg.author.avatarURL">
                       <img :src="msg.author.avatarURL" alt=""
                            class="h-8 w-8 rounded-full min-w-min"
                            referrerpolicy="no-referrer"/>
