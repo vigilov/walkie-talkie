@@ -90,18 +90,68 @@
 </template>
 
 <script setup lang="ts">
-import {useMyChats, useDeleteChat, useOthersChats} from "#imports";
+import {useMyChats, useDeleteChat, useOthersChats, onMounted, onUnmounted} from "#imports";
 import {useAuthUser} from "~/composables/auth.cient";
 import {IChat} from "~/composables/chats.client";
+import {collection, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
 
 definePageMeta({
   middleware: ['auth']
 })
 
 const authUser = await useAuthUser()
-const myChats = ref(<Array<IChat>>await useMyChats(authUser?.uid))
+const myChats = ref<Array<IChat>>([])
+const othersChats = ref<Array<IChat>>([])
+let myChatsUnSubs: Unsubscribe
+let otherChatsUnSubs: Unsubscribe
 
-const othersChats = ref(<Array<IChat>>await useOthersChats(authUser?.uid))
+
+onMounted(async () => {
+  const authUser = await useAuthUser()
+  if (!authUser) {
+    return
+  }
+
+  myChatsUnSubs = onSnapshot(query(
+      collection(getFirestore(), "chats"),
+      where("createdBy", "==", authUser.uid),
+      orderBy("createdAt", "asc"),
+  ), (snap) => {
+    snap.docChanges().forEach((change) => {
+      if (change.type == 'added') {
+        myChats.value.unshift(<IChat>change.doc.data())
+      }
+      if (change.type == 'removed') {
+        myChats.value = myChats.value.filter((e) => e.id == change.doc.id)
+      }
+    })
+  })
+
+  otherChatsUnSubs = onSnapshot(query(
+      collection(getFirestore(), "chats"),
+      where("responser.id", "==", authUser.uid),
+      where("status", "==", 'opened'),
+      orderBy("createdAt", "asc"),
+  ), (snap) => {
+    snap.docChanges().forEach((change) => {
+      if (change.type == 'added') {
+        othersChats.value.unshift(<IChat>change.doc.data())
+      }
+      if (change.type == 'removed') {
+        othersChats.value = othersChats.value.filter((e) => e.id == change.doc.id)
+      }
+    })
+  })
+})
+
+onUnmounted(() => {
+  if (myChatsUnSubs) {
+    myChatsUnSubs()
+  }
+  if (otherChatsUnSubs) {
+    otherChatsUnSubs()
+  }
+})
 
 async function removeChat(id: string) {
   await useDeleteChat(id)

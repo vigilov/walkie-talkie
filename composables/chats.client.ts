@@ -166,8 +166,7 @@ export const useSendSystemMessage = async (text: string, chatID: string) => {
     };
 
     try {
-        const docRef = await addDoc(collection(getFirestore(), "messages"), newMessage);
-        console.log("Document written with ID: ", docRef.id);
+        await addDoc(collection(getFirestore(), "messages"), newMessage);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
