@@ -56,12 +56,12 @@
             </div>
           </div>
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button type="button" class="relative">
+            <button type="button" class="relative" @click="toNewChat">
               <span class="sr-only">View notifications</span>
               <Icon name="tabler:bell" class="text-2xl text-teal-300" aria-hidden="true"/>
 
-              <NuxtLink class="bg-red-900 rounded-full w-2 h-2 border border-white absolute right-0 top-0"
-                        v-if="newChat"></NuxtLink>
+              <button class="bg-red-900 rounded-full w-2 h-2 border border-white absolute right-0 top-0"
+                      v-if="newChat"></button>
             </button>
             <HeadlessMenu as="div" class="relative ml-3">
               <div>
@@ -117,11 +117,11 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, useRoute} from "#imports";
+import {navigateTo, onMounted, onUnmounted, useRoute} from "#imports";
 import {IAuthUser, useAuthUser, useSignOut} from "~/composables/auth.cient";
 import {ModalWindow} from "#components";
-import {collection, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
-import {IChat, IMessage} from "~/composables/chats.client";
+import {collection, getFirestore, onSnapshot, query, Unsubscribe, where} from "firebase/firestore";
+import {IChat} from "~/composables/chats.client";
 
 const auth = <IAuthUser>await useAuthUser()
 const newChat = ref<string | undefined>()
@@ -133,6 +133,14 @@ function IsCurrentPage(page: string): boolean {
 
 function goTo(url: string) {
   navigateTo(url)
+}
+
+function toNewChat() {
+  if (newChat.value) {
+    navigateTo(`/chats/${newChat.value}`)
+
+    newChat.value = undefined
+  }
 }
 
 interface INav {

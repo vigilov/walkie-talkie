@@ -20,7 +20,6 @@
               <div class="min-w-0 flex-1">
                 <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                   {{ chat.topic }}
-                  {{ chat.id }}
                 </span>
               </div>
 
