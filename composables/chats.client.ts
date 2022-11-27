@@ -29,6 +29,7 @@ export interface Responser {
     name: string
     photoURL: string
     id: string
+    newMessages: number
 }
 
 export interface IChat {
@@ -40,6 +41,7 @@ export interface IChat {
     createdBy: string
     createdAt: string
     summary?: string
+    newMessages: number
     status: ChatStatus
 }
 
@@ -127,7 +129,7 @@ export const useGetChat = async (uid: string) : Promise<IChat> => {
     return Promise.resolve(chat);
 }
 
-export const useSendMessage = async (text: string, chatID: string) => {
+export const useSendMessage = async (chatID: string, text: string) => {
     const authUser = await useAuthUser()
     if (!authUser) {
         return
@@ -141,8 +143,7 @@ export const useSendMessage = async (text: string, chatID: string) => {
     };
 
     try {
-        const docRef = await addDoc(collection(getFirestore(), "messages"), newMessage);
-        console.log("Document written with ID: ", docRef.id);
+        await addDoc(collection(getFirestore(), "messages"), newMessage);
     } catch (e) {
         console.error("Error adding document: ", e);
     }

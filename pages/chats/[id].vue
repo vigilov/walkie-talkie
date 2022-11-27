@@ -20,6 +20,7 @@
               <div class="min-w-0 flex-1">
                 <span class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                   {{ chat.topic }}
+                  {{ chat.id }}
                 </span>
               </div>
 
@@ -61,7 +62,7 @@
                   <div v-if="IsSystemMessage(msg)"
                        class="flex items-center justify-center h-10 w-10 rounded-full bg-white flex-shrink-0 text-white">
                     <img src="/logo_chat.png" class="h-8 w-8 rounded-r-full min-w-min"
-                         referrerpolicy="no-referrer"/>
+                         referrerpolicy="no-referrer" alt="."/>
                   </div>
                   <div v-else
                        class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -221,7 +222,6 @@ Notification.requestPermission().then(async (perms: string) => {
       console.log("can't update user", e)
     }
   }
-  console.log(perms)
 })
 
 async function newExpert() {
@@ -246,7 +246,30 @@ async function send() {
     return
   }
 
-  await useSendMessage(<string>message.value, <string>chatID.value)
+  await useSendMessage(<string>chatID.value, <string>message.value)
+
+  const amIResolver = chat.value.createdBy != authUser.uid
+  if (amIResolver) {
+    if (!chat.value.newMessages) {
+      chat.value.newMessages = 1
+    } else {
+      chat.value.newMessages += 1
+    }
+    await useUpdateChat(chat.value.id, {
+      newMessages: chat.value.newMessages
+    })
+  } else if (chat.value.responser) {
+    if (!chat.value.responser.newMessages) {
+      chat.value.responser.newMessages = 1
+    } else {
+      chat.value.responser.newMessages += 1
+    }
+
+    await useUpdateChat(chat.value.id, {
+      responser: {newMessages: chat.value.responser.newMessages}
+    })
+  }
+
   message.value = "";
 }
 
@@ -283,6 +306,20 @@ function IsAuthUserMessage(msg: IMessage): boolean {
   return msg.author?.id !== authUser?.uid
 }
 
+async function unCountMessages() {
+  const amIResolver = chat.value.createdBy != authUser.uid
+
+  if (amIResolver) {
+    await useUpdateChat(chat.value.id, {
+      responser: {newMessages: 0}
+    })
+  } else if (chat.value.responser) {
+    await useUpdateChat(chat.value.id, {
+      newMessages: 0
+    })
+  }
+}
+
 onUpdated(() => {
   scrollBottom()
 })
@@ -293,6 +330,8 @@ onMounted(async () => {
   if (!authUser) {
     return
   }
+
+  await unCountMessages()
 
   const q = query(
       collection(getFirestore(), "messages"),
@@ -349,5 +388,7 @@ onUnmounted(async () => {
   if (chatUnsubscribe) {
     await chatUnsubscribe()
   }
+
+  await unCountMessages()
 })
 </script>

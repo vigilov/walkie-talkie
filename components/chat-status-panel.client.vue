@@ -32,14 +32,11 @@ const unReadCount = ref<number>(0)
 let unsubscribe: Unsubscribe
 
 onMounted(() => {
-  console.log(props.id)
   unsubscribe = onSnapshot(doc(getFirestore(), "chats", <string>props.id), (snapshot) => {
     if (!snapshot.exists()) {
       return
     }
     chat.value = <IChat>snapshot.data()
-
-    
   })
 })
 
