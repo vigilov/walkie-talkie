@@ -60,7 +60,7 @@
                      :class="[IsSystemMessage(msg) || IsAuthUserMessage(msg) ? 'flex-row-reverse' : '']">
                   <div v-if="IsSystemMessage(msg)"
                        class="flex items-center justify-center h-10 w-10 rounded-full bg-white flex-shrink-0 text-white">
-                    <img src="/logo_chat.png" class="h-8 w-8 rounded-r-full min-w-min"
+                    <img alt="WT" src="/logo_chat.png" class="h-8 w-8 rounded-r-full min-w-min"
                          referrerpolicy="no-referrer"/>
                   </div>
                   <div v-else
@@ -86,7 +86,7 @@
               </div>
 
               <div v-if="chat.status === ChatStatus.Pending" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
-                <div class="flex flex-row items-center">
+                <div class="flex flex-row-reverse flex-row items-center">
                   <div class="spinner">
                     <div class="double-bounce1"></div>
                     <div class="double-bounce2"></div>

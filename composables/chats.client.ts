@@ -10,6 +10,7 @@ import {
     query,
     where,
     increment,
+    deleteField,
     orderBy, getFirestore,
 } from "firebase/firestore";
 import {useAuthUser} from "~/composables/auth.cient";
@@ -183,15 +184,17 @@ export const useNewExpert = async (chatID: string) => {
         return
     }
 
-
     const chat = await useChat(chatID)
-    if (chat.responser)
+    if (chat.responser) {
         chat.unMatchedParticipants.push(chat.responser.id)
+        chat.responser = undefined
+    }
     chat.status = ChatStatus.Pending
 
     await useUpdateChat(chatID, {
         unMatchedParticipants: chat.unMatchedParticipants,
         status: chat.status,
+        responser: deleteField(),
     })
 }
 
