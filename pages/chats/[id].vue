@@ -85,7 +85,8 @@
                 </div>
               </div>
 
-              <div v-if="chat.status === ChatStatus.Pending" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
+              <div v-if="chat.status === ChatStatus.Pending"
+                   class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
                 <div class="flex flex-row-reverse flex-row items-center">
                   <div class="spinner">
                     <div class="double-bounce1"></div>
