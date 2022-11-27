@@ -38,6 +38,8 @@ export interface IChat {
     id: string
     topic: string
     unMatchedParticipants: Array<string>
+    unMatchedSummarizedChats: Array<string>
+    summarizedChatId?: string
     responser?: Responser
     firstMessage: string
     createdBy: string
@@ -190,12 +192,18 @@ export const useNewExpert = async (chatID: string) => {
         chat.unMatchedParticipants.push(chat.responser.id)
         chat.responser = undefined
     }
+    if (chat.summarizedChatId){
+        chat.unMatchedSummarizedChats.push(chat.summarizedChatId)
+        chat.summarizedChatId = undefined
+    }
     chat.status = ChatStatus.Pending
 
     await useUpdateChat(chatID, {
         unMatchedParticipants: chat.unMatchedParticipants,
+        unMatchedSummarizedChats: chat.unMatchedSummarizedChats,
         status: chat.status,
         responser: deleteField(),
+        summarizedChatId: deleteField(),
     })
 }
 

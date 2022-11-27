@@ -100,6 +100,7 @@ async function create() {
     firstMessage: <string>message.value,
     createdAt: new Date().toISOString(),
     unMatchedParticipants: [],
+    unMatchedSummarizedChats: [],
     createdBy: authUser.uid,
     status: ChatStatus.Pending,
     topic: topic.value,
