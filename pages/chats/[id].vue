@@ -369,19 +369,18 @@ onMounted(async () => {
       return
     }
 
-    const s = chat.value
-    const lastStatus = s.status
+    const lastStatus = chat.value.status
 
     chat.value = <IChat>snapshot.data()
     summary.value = chat.value.summary
 
-    if (s.createdBy != authUser.uid && [ChatStatus.Resolved, ChatStatus.Pending, ChatStatus.Closed].includes(chat.value.status)) {
+    if (chat.value.createdBy != authUser.uid && [ChatStatus.Resolved, ChatStatus.Pending, ChatStatus.Closed].includes(chat.value.status)) {
       navigateTo("/chats")
       return;
     }
 
-    if (lastStatus == ChatStatus.Pending && s.status == ChatStatus.Opened && s.responser) {
-      useSendSystemMessage(s.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
+    if (lastStatus == ChatStatus.Pending && chat.value.status == ChatStatus.Opened && chat.value.responser) {
+      useSendSystemMessage(chat.value.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
     }
   })
 
