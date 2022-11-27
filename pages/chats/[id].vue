@@ -371,7 +371,7 @@ onMounted(async () => {
     chat.value = <IChat>snapshot.data()
     summary.value = s.summary
 
-    if (s.createdBy != authUser.uid && s.status == ChatStatus.Pending) {
+    if (s.createdBy != authUser.uid && [ChatStatus.Resolved, ChatStatus.Pending, ChatStatus.Closed].includes(s.status)) {
       navigateTo("/chats")
       return;
     }
