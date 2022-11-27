@@ -182,7 +182,17 @@ import {
   useUpdateUser,
   useUser
 } from "#imports";
-import {collection, doc, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getFirestore,
+  increment,
+  onSnapshot,
+  orderBy,
+  query,
+  Unsubscribe,
+  where
+} from "firebase/firestore";
 import {getMessaging, getToken} from "@firebase/messaging";
 import {IChat, IMessage, useGetChat, useSendMessage, useSendSystemMessage} from "~/composables/chats.client";
 
@@ -260,14 +270,8 @@ async function send() {
       newMessages: chat.value.newMessages
     })
   } else if (chat.value.responser) {
-    if (!chat.value.responser.newMessages) {
-      chat.value.responser.newMessages = 1
-    } else {
-      chat.value.responser.newMessages += 1
-    }
-
     await useUpdateChat(chat.value.id, {
-      responser: {newMessages: chat.value.responser.newMessages}
+      "responser.newMessages": increment(1)
     })
   }
 
