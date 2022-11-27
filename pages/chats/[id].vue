@@ -84,13 +84,13 @@
                 </div>
               </div>
 
-              <div v-if="chat.status === 'pending'" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
+              <div v-if="chat.status === ChatStatus.Pending" class="p-3 rounded-md col-start-6 col-end-13 max-sm:col-start-2">
                 <div class="flex flex-row items-center">
                   <div class="spinner">
                     <div class="double-bounce1"></div>
                     <div class="double-bounce2"></div>
                   </div>
-                  <div class="relative ml-3 text-sm bg-teal-50 py-2 px-4 shadow w-fit w-full">
+                  <div class="relative mx-3 text-sm bg-teal-50 py-2 px-4 shadow w-fit w-full">
                     <div>We are looking for an expert</div>
                     <div class="text-gray-400 text-xs">{{
                         new Date().toISOString().split('.')[0].split("T")[1]
@@ -306,7 +306,7 @@ onMounted(async () => {
         return
       }
       const m = <IMessage>change.doc.data()
-      if (!m.author && chat.createdBy != authUser.uid) {
+      if (!m.author && chat.value.createdBy != authUser.uid) {
         return
       }
       messages.value.push(m);

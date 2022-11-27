@@ -19,7 +19,8 @@ import {navigateTo} from "#imports"
 
 export enum ChatStatus {
     Off = "off",
-    Opened = "opened",
+    Opened = "opened", // founded from experts
+    Founded = "founded", // founded in summarized
     Pending = "pending",
     Resolved = "resolved",
     Closed = "closed"
