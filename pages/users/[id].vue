@@ -11,6 +11,10 @@
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Profile</h3>
                 <p class="mt-1 text-sm text-gray-600">If you want to get questions from users and are ready to answer them, mark yourself as an expert or business.</p>
               </div>
+              <div v-if="user.roles.includes('expert') || user.roles.includes('business')" class="px-4 pt-4 sm:px-0">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Rating</h3>
+                <p class="mt-1 text-sm text-gray-600">{{ user.tacos }} <Icon name="emojione:taco" /></p>
+              </div>
             </div>
             <div class="mt-5 md:col-span-2 md:mt-0">
               <form method="POST" @submit.prevent="save">
