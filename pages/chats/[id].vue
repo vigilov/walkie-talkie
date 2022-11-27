@@ -365,17 +365,17 @@ onMounted(async () => {
   });
 
   chatUnsubscribe = onSnapshot(doc(getFirestore(), "chats", <string>chatID.value), (snapshot) => {
-    const s = chat.value
     if (!snapshot.exists()) {
       return
     }
 
+    const s = chat.value
     const lastStatus = s.status
 
     chat.value = <IChat>snapshot.data()
-    summary.value = s.summary
+    summary.value = chat.value.summary
 
-    if (s.createdBy != authUser.uid && [ChatStatus.Resolved, ChatStatus.Pending, ChatStatus.Closed].includes(s.status)) {
+    if (s.createdBy != authUser.uid && [ChatStatus.Resolved, ChatStatus.Pending, ChatStatus.Closed].includes(chat.value.status)) {
       navigateTo("/chats")
       return;
     }
