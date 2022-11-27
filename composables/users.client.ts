@@ -3,7 +3,7 @@ import {getFirestore, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 export interface IUser {
     id: string
     devices: Array<string>
-    bio?: string
+    bio: string
     roles: Array<string>
     tacos: number
     name: string

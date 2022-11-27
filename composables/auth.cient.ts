@@ -22,7 +22,8 @@ export const useSignInWithGoogle = async (role?: string): Promise<string | undef
             roles: roles,
             tacos: 0,
             name: <string>auth.user.displayName,
-            photoURL: <string>auth.user.photoURL
+            photoURL: <string>auth.user.photoURL,
+            bio: ""
         })
 
         return Promise.resolve(auth.user.uid)
