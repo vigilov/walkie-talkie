@@ -38,6 +38,8 @@ onMounted(() => {
       return
     }
     chat.value = <IChat>snapshot.data()
+
+    
   })
 })
 

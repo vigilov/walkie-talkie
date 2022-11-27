@@ -140,6 +140,7 @@
             </div>
           </form>
         </div>
+
         <div v-else-if="chat.status === ChatStatus.Resolved" class="w-full p-4">
           <h4 class="text-gray-500">
             Summary:
@@ -194,7 +195,7 @@ const user = await useUser(authUser.uid)
 const summary = ref<string>()
 const input = ref()
 
-let chat = await useGetChat(<string>chatID.value)
+let chat = ref<IChat>(await useGetChat(<string>chatID.value))
 
 let unsubscribe: Unsubscribe
 let chatUnsubscribe: Unsubscribe
@@ -230,7 +231,7 @@ async function updateSummary() {
     return
   }
 
-  await useUpdateChat(chat.id, {
+  await useUpdateChat(chat.value.id, {
     summary: summary.value
   })
 
@@ -263,7 +264,7 @@ function abortChat() {
 }
 
 function IsPanelEnabled(): boolean {
-  const c = chat
+  const c = chat.value
 
   if (!c) {
     return false
@@ -307,22 +308,23 @@ onMounted(async () => {
   });
 
   chatUnsubscribe = onSnapshot(doc(getFirestore(), "chats", <string>chatID.value), (snapshot) => {
+    const s = chat.value
     if (!snapshot.exists()) {
       return
     }
 
-    const lastStatus = chat.status
+    const lastStatus = s.status
 
-    chat = <IChat>snapshot.data()
-    summary.value = chat.summary
+    chat.value = <IChat>snapshot.data()
+    summary.value = s.summary
 
-    if (chat.createdBy != authUser.uid && chat.status == ChatStatus.Pending) {
+    if (s.createdBy != authUser.uid && s.status == ChatStatus.Pending) {
       navigateTo("/chats")
       return;
     }
 
-    if (lastStatus == ChatStatus.Pending && chat.status == ChatStatus.Opened && chat.responser) {
-      useSendSystemMessage(chat.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
+    if (lastStatus == ChatStatus.Pending && s.status == ChatStatus.Opened && s.responser) {
+      useSendSystemMessage(s.responser.name + " was founded. He'll answer as soon as possible.", <string>chatID.value)
     }
   })
 

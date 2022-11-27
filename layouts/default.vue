@@ -56,9 +56,12 @@
             </div>
           </div>
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button type="button">
+            <button type="button" class="relative">
               <span class="sr-only">View notifications</span>
               <Icon name="tabler:bell" class="text-2xl text-teal-300" aria-hidden="true"/>
+
+              <NuxtLink class="bg-red-900 rounded-full w-2 h-2 border border-white absolute right-0 top-0"
+                        v-if="newChat"></NuxtLink>
             </button>
             <HeadlessMenu as="div" class="relative ml-3">
               <div>
@@ -109,16 +112,20 @@
     <NuxtPage class="relative z-0 mt-16"/>
   </div>
 
-  <ModalWindow />
+  <ModalWindow/>
 
 </template>
 
 <script setup lang="ts">
-import {useRoute} from "#imports";
+import {onMounted, onUnmounted, useRoute} from "#imports";
 import {IAuthUser, useAuthUser, useSignOut} from "~/composables/auth.cient";
 import {ModalWindow} from "#components";
+import {collection, getFirestore, onSnapshot, orderBy, query, Unsubscribe, where} from "firebase/firestore";
+import {IChat, IMessage} from "~/composables/chats.client";
 
 const auth = <IAuthUser>await useAuthUser()
+const newChat = ref<string | undefined>()
+let unsubscribe: Unsubscribe
 
 function IsCurrentPage(page: string): boolean {
   return useRoute().name == page
@@ -133,6 +140,33 @@ interface INav {
   path: string
   pathName: string
 }
+
+onMounted(async () => {
+  const authUser = await useAuthUser()
+  if (!authUser) {
+    return
+  }
+
+  unsubscribe = onSnapshot(query(
+      collection(getFirestore(), "chats"),
+      where("responser.id", "==", authUser.uid),
+      where("status", "==", 'opened'),
+      where("createdAt", ">", new Date().toISOString())
+  ), (snap) => {
+    snap.docChanges().forEach((change) => {
+      if (change.type !== "added") {
+        return
+      }
+
+      const m = <IChat>change.doc.data()
+      newChat.value = m.id
+    })
+  })
+})
+
+onUnmounted(() => {
+  unsubscribe()
+})
 
 const navigation: Array<INav> = [{
   name: "Chats", path: "/chats", pathName: "chats"
