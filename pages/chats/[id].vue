@@ -176,10 +176,8 @@ import {
   useAuthUser,
   useNewExpert,
   useRoute,
-  useRuntimeConfig,
   useState,
   useUpdateChat,
-  useUpdateUser,
   useUser
 } from "#imports";
 import {
@@ -193,7 +191,6 @@ import {
   Unsubscribe,
   where
 } from "firebase/firestore";
-import {getMessaging, getToken} from "@firebase/messaging";
 import {IChat, IMessage, useGetChat, useSendMessage, useSendSystemMessage} from "~/composables/chats.client";
 
 definePageMeta({
@@ -213,27 +210,6 @@ let chat = ref<IChat>(await useGetChat(<string>chatID.value))
 
 let unsubscribe: Unsubscribe
 let chatUnsubscribe: Unsubscribe
-
-Notification.requestPermission().then(async (perms: string) => {
-  if (!user) {
-    return
-  }
-  if (perms === 'granted') {
-    const m = await getMessaging()
-    const t = await getToken(m, {vapidKey: useRuntimeConfig().public.webPushKey});
-
-    if (!user.devices.includes(t)) {
-      user.devices.push(t)
-    }
-    try {
-      await useUpdateUser(user.id, {
-        devices: user.devices
-      })
-    } catch (e) {
-      console.log("can't update user", e)
-    }
-  }
-})
 
 async function newExpert() {
   await useNewExpert(<string>chatID.value)
