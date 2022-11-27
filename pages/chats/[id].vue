@@ -68,7 +68,7 @@
                        class="flex rounded-full bg-teal-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <template v-if="msg.author.avatarURL">
                       <img :src="msg.author.avatarURL" alt=""
-                           class="h-8 w-8 rounded-full min-w-min"
+                           class="h-8 w-8 rounded-full min-w-min" style="min-width: 6px"
                            referrerpolicy="no-referrer"/>
                     </template>
                     <template v-else>
